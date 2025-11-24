@@ -119,7 +119,7 @@ const ApplicantsTable = () => {
                               checked={
                                 selectedStatus[item._id] ===
                                 status.toLowerCase()
-                              } // ⭐ Local state controls UI
+                              } 
                               readOnly
                             />
                             <span className="ml-1">{status}</span>
