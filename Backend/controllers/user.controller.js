@@ -193,6 +193,7 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
+    
 
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;

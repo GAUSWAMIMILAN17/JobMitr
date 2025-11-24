@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   Table,
   TableBody,
@@ -20,17 +20,36 @@ const shortlistingStatus = ["Accepted", "Rejected"];
 const ApplicantsTable = () => {
   const { applicants } = useSelector((store) => store.application);
 
+  // ⭐ Local UI state to keep selected status for each applicant without refresh
+  const [selectedStatus, setSelectedStatus] = useState({});
+
+  // ⭐ Load statuses from backend when data first loads
+  useEffect(() => {
+    if (applicants?.applications) {
+      const map = {};
+      applicants.applications.forEach((a) => {
+        map[a._id] = a.status; // backend value (accepted / rejected)
+      });
+      setSelectedStatus(map);
+    }
+  }, [applicants]);
+
   const statusHandler = async (status, id) => {
-    console.log("called");
     try {
       axios.defaults.withCredentials = true;
       const res = await axios.post(
         `${APPLICATION_API_ENDPOINT}/status/${id}/update`,
         { status }
       );
-      console.log(res);
+
       if (res.data.success) {
         toast.success(res.data.message);
+
+        // ⭐ Update local UI instantly (without refresh)
+        setSelectedStatus((prev) => ({
+          ...prev,
+          [id]: status.toLowerCase(),
+        }));
       }
     } catch (error) {
       toast.error(error.response.data.message);
@@ -51,6 +70,7 @@ const ApplicantsTable = () => {
             <TableHead className="text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
+
         <TableBody>
           {applicants &&
             applicants?.applications?.map((item) => (
@@ -58,6 +78,7 @@ const ApplicantsTable = () => {
                 <TableCell>{item?.applicant?.fullname}</TableCell>
                 <TableCell>{item?.applicant?.email}</TableCell>
                 <TableCell>{item?.applicant?.phoneNumber}</TableCell>
+
                 <TableCell>
                   {item.applicant?.profile?.resume ? (
                     <a
@@ -67,37 +88,45 @@ const ApplicantsTable = () => {
                       rel="noopener noreferrer"
                     >
                       Download
-                      {/* {item?.applicant?.profile?.resume} */}
                     </a>
                   ) : (
                     <span>NA</span>
                   )}
                 </TableCell>
+
                 <TableCell>{item?.applicant?.createdAt.split("T")[0]}</TableCell>
+
                 <TableCell className="float-right cursor-pointer">
                   <Popover>
                     <PopoverTrigger>
                       <MoreHorizontal />
                     </PopoverTrigger>
+
                     <PopoverContent className="w-32">
-                       {shortlistingStatus.map((status, index) => {
-                          return (
-                            <div
-                              onClick={() => statusHandler(status, item?._id)}
-                              key={index}
-                              className="flex w-fit items-center my-2 cursor-pointer"
-                            >
-                              <input
-                                type="radio"
-                                name="shortlistingStatus"
-                                value={status}
-                                
-                              />{" "}
-                              {status}
-                            </div>
-                          );
-                        })}
-                      </PopoverContent>
+                      {shortlistingStatus.map((status, index) => {
+                        return (
+                          <div
+                            onClick={() =>
+                              statusHandler(status, item?._id)
+                            }
+                            key={index}
+                            className="flex w-fit items-center my-2 cursor-pointer"
+                          >
+                            <input
+                              type="radio"
+                              name={`shortlistingStatus-${item._id}`}
+                              value={status}
+                              checked={
+                                selectedStatus[item._id] ===
+                                status.toLowerCase()
+                              } // ⭐ Local state controls UI
+                              readOnly
+                            />
+                            <span className="ml-1">{status}</span>
+                          </div>
+                        );
+                      })}
+                    </PopoverContent>
                   </Popover>
                 </TableCell>
               </tr>

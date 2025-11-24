@@ -54,6 +54,7 @@ export const postJob = async (req, res) => {
   }
 };
 
+
 //Users
 export const getAllJobs = async (req, res) => {
   try {
