@@ -100,7 +100,7 @@ const EditProfileModal = ({ open, setOpen }) => {
                   type="text"
                   id="name"
                   value={input.fullname}
-                  name="name"
+                  name="fullname"
                   onChange={changeEventHandler}
                   className="col-span-3 border border-gray-300 rounded-md p-2"
                 />

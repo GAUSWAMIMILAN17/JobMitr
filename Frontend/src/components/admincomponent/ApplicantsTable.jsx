@@ -91,6 +91,7 @@ const ApplicantsTable = () => {
                                 type="radio"
                                 name="shortlistingStatus"
                                 value={status}
+                                
                               />{" "}
                               {status}
                             </div>
