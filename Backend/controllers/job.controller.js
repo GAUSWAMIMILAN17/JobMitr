@@ -54,7 +54,6 @@ export const postJob = async (req, res) => {
   }
 };
 
-
 //Users
 export const getAllJobs = async (req, res) => {
   try {
@@ -117,3 +116,58 @@ export const getAdminJobs = async (req, res) => {
   }
 };
 
+// Admin job update
+export const updateJobs = async (req, res) => {
+  try {
+    const {
+      title,
+      description,
+      location,
+      salary,
+      position,
+      requirements,
+      experienceLevel,
+      jobType,
+    } = req.body;
+    // console.log(title);
+    const jobId = req.params.id;
+    const job = await Job.findById(jobId);
+    if (!job) {
+      return res.status(404).json({ message: "Job not found", status: false });
+    }
+    if (title) job.title = title;
+    if (description) job.description = description;
+    if (location) job.location = location;
+    if (salary) job.salary = Number(salary);
+    if (position) job.position = Number(position);
+    if (requirements) job.requirements = requirements;
+    if (experienceLevel) job.experienceLevel = Number(experienceLevel);
+    if (jobType) job.jobType = jobType;
+
+    await job.save();
+
+    const updatedJob = {
+      _id: job._id,
+      title: job.title,
+      description: job.description,
+      location: job.location,
+      salary: job.salary,
+      position: job.position,
+      requirements: job.requirements,
+      experienceLevel: job.experienceLevel,
+      jobType: job.jobType,
+    };
+
+    return res.status(200).json({
+      message: "Job updated successfully",
+      job: updatedJob,
+      success: true,
+    });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({
+      message: "Server Error updating profile",
+      success: false,
+    });
+  }
+};
