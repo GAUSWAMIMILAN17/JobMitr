@@ -17,7 +17,7 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const corsOptions = {
-  origin: ["https://job-mitra-omega.vercel.app"],
+  origin: ["https://jobmitr.vercel.app/"],
   credentials: true,
 };
 
