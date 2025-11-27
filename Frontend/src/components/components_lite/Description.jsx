@@ -24,7 +24,7 @@ const Description = () => {
     singleJob?.applications?.some(
       (application) => application.applicant === user?._id
     ) || false;
-  const [isApplied, setIsApplied] = useState(false);
+  const [isApplied, setIsApplied] = useState(isIntiallyApplied);
 
   const applyJobHandler = async () => {
     try {
