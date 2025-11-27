@@ -7,9 +7,18 @@ import path from "path";
 
 export const register = async (req, res) => {
   try {
-    const { fullname, email, phoneNumber, password, adharcard, pancard, role } = req.body;
+    const { fullname, email, phoneNumber, password, adharcard, pancard, role } =
+      req.body;
 
-    if (!fullname || !email || !phoneNumber || !password || !role || !pancard || !adharcard) {
+    if (
+      !fullname ||
+      !email ||
+      !phoneNumber ||
+      !password ||
+      !role ||
+      !pancard ||
+      !adharcard
+    ) {
       return res.status(400).json({
         message: "Missing required fields",
         success: false,
@@ -139,7 +148,7 @@ export const login = async (req, res) => {
         maxAge: 24 * 60 * 60 * 1000,
         httpOnly: true,
         sameSite: "Strict",
-        path: "/"
+        path: "/",
       })
       .json({
         message: `Welcome back ${user.fullname}`,
@@ -168,7 +177,6 @@ export const logout = async (req, res) => {
       message: "Logged out successfully",
       success: true,
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({
@@ -177,7 +185,6 @@ export const logout = async (req, res) => {
     });
   }
 };
-
 
 export const updateProfile = async (req, res) => {
   try {
@@ -193,7 +200,6 @@ export const updateProfile = async (req, res) => {
         success: false,
       });
     }
-    
 
     if (fullname) user.fullname = fullname;
     if (email) user.email = email;
@@ -201,10 +207,35 @@ export const updateProfile = async (req, res) => {
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skills.split(",");
 
+    // if (file) {
+    //   // const fileUri = getDataUri(file);
+    //   const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
+    //     resource_type: "raw",
+    //     folder: "file"
+    //   });
+    //   user.profile.resume = cloudResponse.secure_url;
+    //   console.log(user?.profile?.resume);
+
+    //   user.profile.resumeOriginalName = file.originalname;
+    // }
     if (file) {
-      const fileUri = getDataUri(file);
-      const cloudResponse = await cloudinary.uploader.upload(fileUri.content);
-      user.profile.resume = cloudResponse.secure_url;
+      const uploadResult = await new Promise((resolve, reject) => {
+        const stream = cloudinary.uploader.upload_stream(
+          {
+            resource_type: "auto",
+            folder: "file",
+            public_id: file.originalname,
+          },
+          (error, result) => {
+            if (error) reject(error);
+            else resolve(result);
+          }
+        );
+
+        stream.end(file.buffer);
+      });
+
+      user.profile.resume = uploadResult.secure_url;
       user.profile.resumeOriginalName = file.originalname;
     }
 
@@ -232,88 +263,6 @@ export const updateProfile = async (req, res) => {
     });
   }
 };
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 // import { User } from "../models/user.model.js";
 // import bcrypt from "bcryptjs";

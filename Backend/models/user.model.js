@@ -43,7 +43,7 @@ const userSchema = new mongoose.Schema(
       resume: {
         type: String, // URL to resume file
       },
-      resumeOriginalname: {
+      resumeOriginalName: {
         type: String, // Original name of resume file
       },
       company: {

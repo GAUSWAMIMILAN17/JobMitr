@@ -81,20 +81,37 @@ const ApplicantsTable = () => {
 
                 <TableCell>
                   {item.applicant?.profile?.resume ? (
-                    <a
-                      className="text-blue-600 cursor-pointer"
-                      href={item?.applicant?.profile?.resume}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                    >
-                      Download
-                    </a>
+                    (() => {
+                      const resumeUrl = item.applicant.profile.resume;
+                      const originalName =
+                        item.applicant.profile.resumeOriginalName?.replace(
+                          /\.pdf$/i,
+                          ""
+                        ) || "resume";
+
+                      const downloadUrl = resumeUrl.replace(
+                        "/upload/",
+                        `/upload/fl_attachment:${originalName}/`
+                      );
+
+                      return (
+                        <a
+                          className="text-blue-600 cursor-pointer"
+                          href={downloadUrl}
+                          download={`${originalName}.pdf`}
+                        >
+                          Download
+                        </a>
+                      );
+                    })()
                   ) : (
                     <span>NA</span>
                   )}
                 </TableCell>
 
-                <TableCell>{item?.applicant?.createdAt.split("T")[0]}</TableCell>
+                <TableCell>
+                  {item?.applicant?.createdAt.split("T")[0]}
+                </TableCell>
 
                 <TableCell className="float-right cursor-pointer">
                   <Popover>
@@ -106,9 +123,7 @@ const ApplicantsTable = () => {
                       {shortlistingStatus.map((status, index) => {
                         return (
                           <div
-                            onClick={() =>
-                              statusHandler(status, item?._id)
-                            }
+                            onClick={() => statusHandler(status, item?._id)}
                             key={index}
                             className="flex w-fit items-center my-2 cursor-pointer"
                           >
@@ -119,7 +134,7 @@ const ApplicantsTable = () => {
                               checked={
                                 selectedStatus[item._id] ===
                                 status.toLowerCase()
-                              } 
+                              }
                               readOnly
                             />
                             <span className="ml-1">{status}</span>

@@ -10,12 +10,19 @@ import { useSelector } from "react-redux";
 import useGetAppliedJobs from "@/hooks/useGetAllAppliedJobs";
 import Footer from "./Footer";
 
- 
 const isResume = true;
 const Profile = () => {
   useGetAppliedJobs();
   const [open, setOpen] = useState(false);
   const { user } = useSelector((store) => store.auth);
+  const originalName = user?.profile?.resumeOriginalName?.replace(
+    /\.pdf$/i,
+    ""
+  );
+  const downloadUrl = user?.profile?.resume?.replace(
+    "/upload/",
+    `/upload/fl_attachment:${originalName}/`
+  );
   return (
     <div>
       <Navbar />
@@ -24,10 +31,7 @@ const Profile = () => {
         <div className="flex justify-between">
           <div className="flex items-center gap-5">
             <Avatar className="cursor-pointer h-24 w-24">
-              <AvatarImage
-                src={user?.profile?.profilePhoto}
-                alt="@shadcn"
-              />
+              <AvatarImage src={user?.profile?.profilePhoto} alt="@shadcn" />
             </Avatar>
             <div>
               <h1 className=" font-medium text-xl">{user?.fullname}</h1>
@@ -72,23 +76,33 @@ const Profile = () => {
           </div>
         </div>
 
-        <div>
-          <div className="grid w-full max-w-sm items-center gap-1.5">
-            <label className="text-md font-bold"> Resume</label>
-            <div>
-              {isResume ? (
-                <a
-                  target="_blank"
-                  href={user?.profile?.resume}
-                  className="text-blue-600 hover:underline cursor-pointer"
-                >
-                  Download
-                  {user?.profile?.resumeOriginalName}
-                </a>
-              ) : (
-                <span>No Resume Found</span>
-              )}
-            </div>
+        <div className="grid w-full max-w-sm items-center gap-1.5">
+          <label className="text-md font-bold"> Resume</label>
+          <div>
+            {isResume ? (
+              (() => {
+                const originalName = user?.profile?.resumeOriginalName?.replace(
+                  /\.pdf$/i,
+                  ""
+                );
+                const downloadUrl = user?.profile?.resume?.replace(
+                  "/upload/",
+                  `/upload/fl_attachment:${originalName}/`
+                );
+
+                return (
+                  <a
+                    href={downloadUrl}
+                    download={`${originalName}.pdf`}
+                    className="text-blue-600 hover:underline cursor-pointer"
+                  >
+                    Download {`${originalName}.pdf`}
+                  </a>
+                );
+              })()
+            ) : (
+              <span>No Resume Found</span>
+            )}
           </div>
         </div>
       </div>
