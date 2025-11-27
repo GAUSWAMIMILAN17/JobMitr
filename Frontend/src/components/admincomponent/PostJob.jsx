@@ -19,6 +19,7 @@ import { JOB_API_ENDPOINT } from "@/utils/data";
 import { toast } from "sonner";
 import { useNavigate } from "react-router-dom";
 import { Loader2 } from "lucide-react";
+import Footer from "../components_lite/Footer";
 
 const companyArray = [];
 
@@ -80,10 +81,10 @@ const PostJob = () => {
   return (
     <div>
       <Navbar />
-      <div className="flex items-center justify-center w-screen my-5">
+      <div className="flex items-center justify-center w-full my-10">
         <form
           onSubmit={submitHandler}
-          className="p-8 max-w-4xl border border-gray-500 shadow-sm hover:shadow-xl hover:shadow-red-300 rounded-lg"
+          className="p-8 max-w-4xl border border-gray-500 shadow-sm hover:shadow-2xl rounded-lg"
         >
           <div className="grid grid-cols-2 gap-5">
             <div>
@@ -206,7 +207,7 @@ const PostJob = () => {
             ) : (
               <Button
                 type="submit"
-                className="w-full px-4 py-2 text-sm text-white bg-black rounded-md hover:bg-blue-600"
+                className="w-full px-4 py-2 text-sm text-white bg-black rounded-md "
               >
                 Post Job
               </Button>
@@ -219,6 +220,7 @@ const PostJob = () => {
           )}
         </form>
       </div>
+      <Footer/>
     </div>
   );
 };

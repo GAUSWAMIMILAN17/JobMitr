@@ -20,9 +20,9 @@ const AdminJobs = () => {
     dispatch(setSearchJobByText(input));
   }, [input]);
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className=" max-w-6xl mx-auto my-10 h-[50vh]">
+      <div className=" max-w-6xl mx-auto my-10 w-full flex-1 ">
         <div className="flex items-center justify-between my-5">
           <h1 className="text-xl font-semibold">All Jobs</h1>
           <Input

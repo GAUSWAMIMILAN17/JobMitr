@@ -18,29 +18,21 @@ const filterData = [
     ],
   },
   {
-    filterType: "Technology",
+    filterType: "Title",
     array: [
-      "Mern",
-      "React",
+      "FullStack Developer",
+      "Frontend Developer",
       "Data Scientist",
-      "Fullstack",
-      "Node",
-      "Python",
-      "Java",
-      "frontend",
-      "backend",
-      "mobile",
-      "desktop",
+      "Backend Developer",
+      "Mern Developer",
+      "DevOps Engineer",
+      "Machine Learning Engineer",
+      "Artificial Intelligence Engineer",
+      "Cybersecurity Engineer",
+      "Product Manager",
+      "UI/UX Designer",
     ],
-  },
-  {
-    filterType: "Experience",
-    array: ["0-3 years", "3-5 years", "5-7 years", "7+ years"],
-  },
-  {
-    filterType: "Salary",
-    array: ["0-50k", "50k-100k", "100k-200k", "200k+"],
-  },
+  }
 ];
 
 const Filter = () => {

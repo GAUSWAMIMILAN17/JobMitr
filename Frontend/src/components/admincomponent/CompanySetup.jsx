@@ -10,6 +10,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { toast } from "sonner";
 import { useSelector } from "react-redux";
 import useGetCompanyById from "@/hooks/useGetCompanyById.jsx";
+import Footer from "../components_lite/Footer.jsx";
 
 const CompanySetup = () => {
   const params = useParams();
@@ -88,7 +89,7 @@ const CompanySetup = () => {
   return (
     <div>
       <Navbar />
-      <div className="max-w-xl mx-auto my-10">
+      <div className="max-w-xl mx-auto my-12">
         <form onSubmit={submitHandler}>
           <div className="flex justify-between items-center gap-5 py-8">
             <Button
@@ -159,6 +160,7 @@ const CompanySetup = () => {
           )}
         </form>
       </div>
+      <Footer/>
     </div>
   );
 };

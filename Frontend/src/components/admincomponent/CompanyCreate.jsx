@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { useDispatch } from "react-redux";
 import { setSingleCompany } from "@/redux/companyslice";
 import axios from "axios";
+import Footer from "../components_lite/Footer";
 
 const CompanyCreate = () => {
   const navigate = useNavigate();
@@ -37,9 +38,9 @@ const CompanyCreate = () => {
     }
   };
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className="max-w-4xl mx-auto">
+      <div className="max-w-3xl mx-auto flex-1 w-full px-4 py-10">
         <div className="my-10">
           <h1 className="font-bold text-2xl ">Company Name</h1>
           <p className="text-gray-600">Company Description</p>
@@ -62,6 +63,7 @@ const CompanyCreate = () => {
           <Button onClick={registerNewCompany}>Continue</Button>
         </div>
       </div>
+      <Footer />
     </div>
   );
 };

@@ -120,11 +120,15 @@ const Description = () => {
             </Button>
           </div>
         </div>
-        <h1 className=" font-medium py-4">
+        {/* <h1 className=" font-medium py-4">
           {singleJob?.description}
-        </h1>
+        </h1> */}
+
         </div>
         <div className="my-10 max-w-5xl shadow-lg mx-auto rounded-3xl border border-gray-200 p-5">
+          <h1 className=" font-medium py-4">
+          {singleJob?.description}
+        </h1>
           <h1 className="font-bold my-1 ">
             Role:{" "}
             <span className=" pl-4 font-normal text-gray-800">

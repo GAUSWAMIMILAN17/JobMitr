@@ -27,7 +27,7 @@ const Profile = () => {
     <div>
       <Navbar />
 
-      <div className="max-w-4xl mx-auto  bg-white border border-gray-200 rounded-2xl my-5 p-8 shadow-lg shadow-gray-200">
+      <div className="max-w-4xl mx-auto bg-white border border-gray-200 rounded-2xl my-5 p-8 shadow-lg shadow-gray-200">
         <div className="flex justify-between">
           <div className="flex items-center gap-5">
             <Avatar className="cursor-pointer h-24 w-24">
@@ -106,7 +106,7 @@ const Profile = () => {
           </div>
         </div>
       </div>
-      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border-gray-200 border px-4 pb-4">
+      <div className="max-w-4xl mx-auto bg-white rounded-2xl shadow-lg border-gray-200 border my-10 px-4 pb-4">
         <h1 className="text-lg my-5 font-bold">Applied Jobs</h1>
 
         {/* Add Application Table */}

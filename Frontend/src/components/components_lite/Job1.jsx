@@ -42,7 +42,7 @@ const Job1 = ({ job }) => {
 
       <div>
         <h1 className="font-bold text-lg my-2">{job?.title}</h1>
-        <p className="text-sm text-gray-600">{job?.description}</p>
+        {/* <p className="text-sm text-gray-600">{job?.description}</p> */}
       </div>
       <div className="flex items-center gap-2 mt-4">
         <Badge className={"text-[#001F3F] font-bold"} variant="ghost">
@@ -56,13 +56,13 @@ const Job1 = ({ job }) => {
         </Badge>
       </div>
       <div className="flex items-center gap-4 mt-4">
-        <Button
+        <Button className="bg-[#4682B4] text-white hover:bg-[#6899c2]"
           onClick={() => navigate(`/description/${job?._id}`)}
-          variant="outline"
+          variant="primery"
         >
           Details
         </Button>
-        <Button className="bg-[#4682B4] hover:bg-[#6899c2]">Save For Later</Button>
+        {/* <Button className="bg-[#4682B4] hover:bg-[#6899c2]">Save For Later</Button> */}
       </div>
     </div>
   );

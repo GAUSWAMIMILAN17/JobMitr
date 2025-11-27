@@ -18,7 +18,7 @@ const JobCards = ({ job }) => {
       </div>
       <div>
         <h2 className="font-bold text-lg my-2">{job.title}</h2>
-        <p className="text-sm text-gray-600">{job.description}</p>
+        {/* <p className="text-sm text-gray-600">{job.description}</p> */}
       </div>
       <div className=" flex gap-2 items-center mt-4 ">
         <Badge className={" text-[#001F3F] font-bold"} variant={"ghost"}>

@@ -21,9 +21,9 @@ const Companies = () => {
     dispatch(setSearchCompanyByText(input));
   }, [input]);
   return (
-    <div>
+    <div className="min-h-screen flex flex-col">
       <Navbar />
-      <div className=" max-w-6xl mx-auto my-10 h-[50vh]">
+      <div className="max-w-6xl mx-auto flex-1 w-full px-4 py-10">
         <div className="flex items-center justify-between my-5">
           <h1 className="font-semibold text-xl">All Companies</h1>
           <Input
