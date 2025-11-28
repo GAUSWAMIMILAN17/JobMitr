@@ -18,16 +18,13 @@ const Description = () => {
   const { singleJob } = useSelector((store) => store.job);
   const { user } = useSelector((store) => store.auth);
 
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [isApplied, setIsApplied] = useState(false);
 
-  // INITIAL APPLIED CHECK (safe)
-  const isInitiallyApplied =
-    singleJob?.applications?.some(
-      (application) => application.applicant === user?._id
-    ) ?? false;
-
-  const [isApplied, setIsApplied] = useState(isInitiallyApplied);
+  // 🔥 FIX #1 — reset old job when jobId changes
+  useEffect(() => {
+    dispatch(setSingleJob(null));
+  }, [jobId]);
 
   // APPLY JOB
   const applyJobHandler = async () => {
@@ -35,22 +32,18 @@ const Description = () => {
       const res = await axios.post(
         `${APPLICATION_API_ENDPOINT}/apply/${jobId}`,
         {},
-        {
-          withCredentials: true,
-        }
+        { withCredentials: true }
       );
 
       if (res.data.success) {
         setIsApplied(true);
 
-        // locally update redux job
         const updatedJob = {
           ...singleJob,
           applications: [...singleJob.applications, { applicant: user?._id }],
         };
 
         dispatch(setSingleJob(updatedJob));
-
         toast.success(res.data.message);
       }
     } catch (error) {
@@ -58,12 +51,9 @@ const Description = () => {
     }
   };
 
-  // FETCH JOB — FIXED useEffect
+  // 🔥 FIX #2 — ONLY jobId dependency (no infinite loop!)
   useEffect(() => {
     const fetchSingleJobs = async () => {
-      setLoading(true);
-      setError(null);
-
       try {
         const res = await axios.get(`${JOB_API_ENDPOINT}/get/${jobId}`, {
           withCredentials: true,
@@ -72,27 +62,33 @@ const Description = () => {
         if (res.data.status) {
           dispatch(setSingleJob(res.data.job));
 
-          // update applied status
-          setIsApplied(
+          // applied check
+          const applied =
             res.data.job.applications?.some(
               (application) => application.applicant === user?._id
-            ) ?? false
-          );
+            ) ?? false;
+
+          setIsApplied(applied);
         } else {
-          setError("Failed to fetch job.");
+          toast.error("Failed to fetch job");
         }
       } catch (error) {
-        setError(error.message || "Error fetching job.");
+        toast.error("Server error");
       } finally {
         setLoading(false);
       }
     };
 
     fetchSingleJobs();
-  }, [jobId]); // ← ONLY THIS (fix for infinite loading)
+  }, [jobId]); // ← correct
 
-  if (!singleJob) {
-    return <div>Loading...</div>;
+  // 🔥 FIX #3 — loading screen + no stale old data
+  if (loading || !singleJob) {
+    return (
+      <div className="flex items-center justify-center h-96 text-xl font-semibold">
+        Loading job details...
+      </div>
+    );
   }
 
   return (
@@ -135,7 +131,6 @@ const Description = () => {
           </div>
         </div>
 
-        {/* Job Content */}
         <div className="my-10 max-w-5xl shadow-lg mx-auto rounded-3xl border border-gray-200 p-5">
           <h1 className=" font-medium py-4">{singleJob?.description}</h1>
 
