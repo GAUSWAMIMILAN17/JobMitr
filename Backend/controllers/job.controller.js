@@ -1,4 +1,6 @@
 import { Job } from "../models/job.model.js";
+import { User } from "../models/user.model.js";
+import sendEmail from "../utils/sendEmail.js";
 //Admin job posting
 export const postJob = async (req, res) => {
   try {
@@ -31,6 +33,12 @@ export const postJob = async (req, res) => {
         success: false,
       });
     }
+
+    const users = await User.find({
+      role: "Student"
+   });
+  //  console.log(users)
+
     const job = await Job.create({
       title,
       description,
@@ -43,6 +51,63 @@ export const postJob = async (req, res) => {
       company: companyId,
       created_by: userId,
     });
+
+    for (const user of users) {
+
+  await sendEmail(
+    user.email,
+    "🚀 New Job Opportunity",
+
+    `
+      <div style="font-family: Arial; padding:20px;">
+
+        <h2 style="color:#2563eb;">
+          New Job Posted 🚀
+        </h2>
+
+        <hr/>
+
+        <p><strong>Job Title:</strong> ${job.title}</p>
+
+        <p><strong>Description:</strong> ${job.description}</p>
+
+        <p><strong>Location:</strong> ${job.location}</p>
+
+        <p><strong>Salary:</strong> ₹${job.salary}</p>
+
+        <p><strong>Job Type:</strong> ${job.jobType}</p>
+
+        <p><strong>Experience:</strong> ${job.experienceLevel} years</p>
+
+        <p><strong>Requirements:</strong> ${job.requirements.join(", ")}</p>
+
+        <br/>
+
+        <a 
+          href="http://localhost:5173/jobs"
+          style="
+            background:#2563eb;
+            color:white;
+            padding:10px 20px;
+            text-decoration:none;
+            border-radius:5px;
+          "
+        >
+          Apply Now
+        </a>
+
+        <br/><br/>
+
+        <p>
+          Best Regards,<br/>
+          Job Portal Team
+        </p>
+
+      </div>
+    `
+  );
+}
+
     res.status(201).json({
       message: "Job posted successfully.",
       job,
@@ -70,6 +135,8 @@ export const getAllJobs = async (req, res) => {
       })
       .sort({ createdAt: -1 });
 
+    // console.log(jobs)
+
     if (!jobs) {
       return res.status(404).json({ message: "No jobs found", status: false });
     }
@@ -85,8 +152,9 @@ export const getJobById = async (req, res) => {
   try {
     const jobId = req.params.id;
     const job = await Job.findById(jobId).populate({
-      path: "applications",
+      path: "applications company",
     });
+    // console.log(job)
     if (!job) {
       return res.status(404).json({ message: "Job not found", status: false });
     }
@@ -168,6 +236,141 @@ export const updateJobs = async (req, res) => {
     res.status(500).json({
       message: "Server Error updating profile",
       success: false,
+    });
+  }
+};
+
+// star job
+export const starJob = async (req, res) => {
+  try {
+
+    const userId = req.id;
+    const jobId = req.params.id;
+
+    const user = await User.findById(userId);
+
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        status: false,
+      });
+    }
+
+    // already saved check
+    const isSaved = user.profile.savedJobs.some(
+      (id) => id.toString() === jobId
+    );
+
+    // jo saved na hoy to add karo
+    if (!isSaved) {
+      user.profile.savedJobs.push(jobId);
+      await user.save();
+    }
+
+    // IMPORTANT
+    // updated populated data fetch karo
+    const updatedUser = await User.findById(userId).populate({
+      path: "profile.savedJobs",
+      populate: {
+        path: "company",
+      },
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: "Job starred successfully",
+      starredJobs: updatedUser.profile.savedJobs,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+      status: false,
+    });
+  }
+};
+// star job fetch
+export const getStarredJobs = async (req, res) => {
+  try {
+    const userId = req.id;
+
+    const user = await User.findById(userId).populate({
+      path: "profile.savedJobs",
+      populate: {
+        path: "company",
+      },
+    });
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        status: false,
+      });
+    }
+
+    return res.status(200).json({
+      savedJobs: user.profile.savedJobs,
+      status: true,
+    });
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+      status: false,
+    });
+  }
+};
+
+// remove star job
+export const removeStarredJob = async (req, res) => {
+  try {
+
+    const userId = req.id;
+    const jobId = req.params.id;
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        status: false,
+      });
+    }
+
+    // remove job from savedJobs
+    user.profile.savedJobs = user.profile.savedJobs.filter(
+      (id) => id.toString() !== jobId
+    );
+
+    await user.save();
+
+    // IMPORTANT
+    // latest updated populated user fetch karo
+    const updatedUser = await User.findById(userId).populate({
+      path: "profile.savedJobs",
+      populate: {
+        path: "company",
+      },
+    });
+
+    return res.status(200).json({
+      status: true,
+      message: "Job removed from starred",
+      starredJobs: updatedUser.profile.savedJobs,
+    });
+
+  } catch (error) {
+
+    console.log(error);
+
+    return res.status(500).json({
+      message: "Server Error",
+      status: false,
     });
   }
 };

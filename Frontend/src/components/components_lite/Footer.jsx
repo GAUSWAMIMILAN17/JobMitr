@@ -1,58 +1,85 @@
 import { Contact, Mail, MapPinHouseIcon } from "lucide-react";
 import React from "react";
-import { PiAddressBook } from "react-icons/pi";
 import { Link } from "react-router-dom";
 
 const Footer = () => {
   return (
-    <div className="bg-[#2c3e50]">
-      <div className="px-5 py-5 max-w-7xl mx-auto mt-1 flex justify-between">
+    <footer className="bg-[#0f1f35] border-t border-white/[0.07]">
+      <div className="max-w-7xl mx-auto px-6 py-12 grid grid-cols-1 md:grid-cols-3 gap-10">
+
+        {/* About */}
         <div>
-          <h1 className="text-xl text-white font-semibold">
-            About <span className="text-[#4682B4] font-bold">Job</span>
-            <span className="text-[#FF8C00] font-bold">Mitra</span>
-          </h1>
-          <div class="w-16 h-[3px] bg-yellow-500 mt-1"></div>
-          <p className="text-[#bdc3c7] mt-4 text-sm whitespace-normal break-words max-w-[300px]">
+          <div className="flex items-center gap-2 mb-1">
+            
+            <h1 className="text-2xl font-bold text-white">
+              Job<span className="text-amber-400">Mitra</span>
+            </h1>
+          </div>
+          <div className="w-10 h-[2px] bg-amber-400 mb-4 rounded-full" />
+          <p className="text-white/45 text-sm leading-relaxed max-w-[280px]">
             JobMitra is the leading job portal connecting talented professionals
             with top employers. Our mission is to make job hunting and
             recruitment seamless and efficient.
           </p>
         </div>
+
+        {/* Quick Links */}
         <div>
-          <h1 className="text-xl font-bold text-white">Quick Links</h1>
-          <div class="w-16 h-[3px] bg-yellow-500 mt-1"></div>
-          <div className="list-none mt-4 text-[#bdc3c7]">
-            <li className="my-1"><Link to={"/Home"}>Home</Link></li>
-            <li className="my-1"><Link to={"/Browse"}>Browse</Link></li>
-            <li className="my-1"><Link to={"/Jobs"}>Jobs</Link></li>
-            <li className="my-1"><Link to={"/Creator"}>About</Link></li>
-          </div>
+          <h2 className="text-base font-semibold text-white mb-1">Quick Links</h2>
+          <div className="w-10 h-[2px] bg-amber-400 mb-5 rounded-full" />
+          <ul className="space-y-2.5">
+            {[
+              { label: "Home", to: "/Home" },
+              { label: "Browse", to: "/Browse" },
+              { label: "Jobs", to: "/Jobs" },
+              { label: "About", to: "/Creator" },
+            ].map(({ label, to }) => (
+              <li key={to}>
+                <Link
+                  to={to}
+                  className="text-sm text-white/45 hover:text-amber-400 transition-colors duration-150 flex items-center gap-1.5 group"
+                >
+                  <span className="w-1 h-1 rounded-full bg-white/20 group-hover:bg-amber-400 transition-colors duration-150" />
+                  {label}
+                </Link>
+              </li>
+            ))}
+          </ul>
         </div>
+
+        {/* Contact */}
         <div>
-          <h1 className="text-xl font-bold text-white">Contact US</h1>
-          <div class="w-16 h-[3px] bg-yellow-500 mt-1"></div>
-          <div className="mt-4 text-[#bdc3c7]">
-            <div className="flex items-center my-2 gap-2">
-              <MapPinHouseIcon className="text-yellow-500 h-5 w-5"></MapPinHouseIcon>
-              <p>123 Business Avenue, Suite 100 New York, NY 10001</p>
-            </div>
-            <div className="flex items-center my-2 gap-2">
-              <Contact className="text-yellow-500 h-5 w-5"></Contact>
-              <p>+1234567890</p>
-            </div>
-            <div className="flex items-center my-2 gap-2">
-              <Mail className="text-yellow-500 h-5 w-5"></Mail>
-              <p>jobmitra@gmail.com</p>
-            </div>
-          </div>
+          <h2 className="text-base font-semibold text-white mb-1">Contact Us</h2>
+          <div className="w-10 h-[2px] bg-amber-400 mb-5 rounded-full" />
+          <ul className="space-y-3.5">
+            <li className="flex items-start gap-3 text-sm text-white/45">
+              <MapPinHouseIcon className="text-amber-400 h-4 w-4 mt-0.5 shrink-0" />
+              <span>Gandhinagar , Gujarat</span>
+            </li>
+            <li className="flex items-center gap-3 text-sm text-white/45">
+              <Contact className="text-amber-400 h-4 w-4 shrink-0" />
+              <span>+91 98765 43210</span>
+            </li>
+            <li className="flex items-center gap-3 text-sm text-white/45">
+              <Mail className="text-amber-400 h-4 w-4 shrink-0" />
+              <span>jobmitra@gmail.com</span>
+            </li>
+          </ul>
         </div>
       </div>
-      <div className="text-center text-white">
-        <p class="max-w-7xl mx-auto h-[0.5px] bg-white my-2"></p>
-        <p className="py-3">© 2025 JobMitra. All Rights Reserved. | Milan Gauswami</p>
+
+      {/* Bottom bar */}
+      <div className="border-t border-white/[0.07]">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+          <p className="text-xs text-white/30">
+            © 2025 JobMitra. All Rights Reserved.
+          </p>
+          <p className="text-xs text-white/30">
+            Made with <span className="text-amber-400">♥</span> by Milan Gauswami
+          </p>
+        </div>
       </div>
-    </div>
+    </footer>
   );
 };
 

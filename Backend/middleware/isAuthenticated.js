@@ -6,7 +6,7 @@ const authenticateToken = (req, res, next) => {
     if (!token) {
       return res
         .status(401)
-        .json({ message: "Please login to apply for this job", success: false });
+        .json({ message: "Please login first", success: false });
     }
     const decoded =   jwt.verify(token, process.env.JWT_SECRET);
     if (!decoded) {
