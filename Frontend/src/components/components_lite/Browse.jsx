@@ -5,9 +5,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { setSearchedQuery } from "@/redux/jobSlice";
 import useGetAllJobs from "@/hooks/useGetAllJobs";
 import Footer from "./Footer";
-import { Search, X, Briefcase, TrendingUp, Building2, SlidersHorizontal } from "lucide-react";
+import { Search, X, Briefcase, TrendingUp, Building2, SlidersHorizontal, ChevronLeft, ChevronRight } from "lucide-react";
 
 const POPULAR_SEARCHES = ["Frontend Developer", "Data Analyst", "UI/UX Designer", "Marketing", "Backend Developer"];
+const JOBS_PER_PAGE = 9;
 
 const Browse = () => {
   useGetAllJobs();
@@ -15,6 +16,7 @@ const Browse = () => {
   const dispatch = useDispatch();
   const [localQuery, setLocalQuery] = useState("");
   const [focused, setFocused] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
 
   const filteredJobs = allJobs.filter((job) => {
     const q = localQuery.toLowerCase();
@@ -25,17 +27,37 @@ const Browse = () => {
     );
   });
 
-  const clearSearch = () => setLocalQuery("");
+  const totalPages = Math.ceil(filteredJobs.length / JOBS_PER_PAGE);
+  const paginatedJobs = filteredJobs.slice(
+    (currentPage - 1) * JOBS_PER_PAGE,
+    currentPage * JOBS_PER_PAGE
+  );
+
+  // Search change thay tyare page 1 par reset
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [localQuery]);
+
+  const clearSearch = () => {
+    setLocalQuery("");
+    setCurrentPage(1);
+  };
 
   const handlePopularTag = (tag) => {
     setLocalQuery(tag);
     dispatch(setSearchedQuery(tag));
   };
 
+  // Page numbers with ellipsis logic
+  const getPageNumbers = () => {
+    if (totalPages <= 7) return Array.from({ length: totalPages }, (_, i) => i + 1);
+    if (currentPage <= 4) return [1, 2, 3, 4, 5, "...", totalPages];
+    if (currentPage >= totalPages - 3) return [1, "...", totalPages - 4, totalPages - 3, totalPages - 2, totalPages - 1, totalPages];
+    return [1, "...", currentPage - 1, currentPage, currentPage + 1, "...", totalPages];
+  };
+
   useEffect(() => {
-    return () => {
-      dispatch(setSearchedQuery(""));
-    };
+    return () => { dispatch(setSearchedQuery("")); };
   }, []);
 
   return (
@@ -44,12 +66,10 @@ const Browse = () => {
 
       {/* ── Hero Search Banner ── */}
       <div className="relative bg-[#0f1f35] overflow-hidden">
-        {/* decorative circles */}
         <div className="absolute -top-16 -right-16 w-64 h-64 rounded-full bg-amber-400/[0.07] pointer-events-none" />
         <div className="absolute -bottom-10 -left-10 w-48 h-48 rounded-full bg-[#4a90d9]/[0.08] pointer-events-none" />
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 py-10">
-          {/* Heading */}
           <div className="flex items-center gap-2 mb-1">
             <Briefcase size={15} className="text-amber-400" />
             <span className="text-xs font-semibold uppercase tracking-widest text-amber-400">
@@ -65,7 +85,6 @@ const Browse = () => {
             opportunities and find your perfect match
           </p>
 
-          {/* Search bar */}
           <div
             className={`flex items-center w-full max-w-2xl bg-white rounded-2xl overflow-hidden transition-all duration-200 ${
               focused
@@ -84,10 +103,7 @@ const Browse = () => {
               className="flex-1 h-12 border-none outline-none text-sm text-slate-800 bg-transparent placeholder:text-slate-400"
             />
             {localQuery && (
-              <button
-                onClick={clearSearch}
-                className="p-2 mr-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all duration-150 cursor-pointer border-none bg-transparent"
-              >
+              <button onClick={clearSearch} className="p-2 mr-1 text-slate-400 hover:text-slate-600 hover:bg-slate-100 rounded-lg transition-all duration-150 cursor-pointer border-none bg-transparent">
                 <X size={14} />
               </button>
             )}
@@ -97,7 +113,6 @@ const Browse = () => {
             </button>
           </div>
 
-          {/* Popular tags */}
           <div className="flex items-center gap-2 flex-wrap mt-4">
             <span className="text-xs text-white/30 font-medium">Popular:</span>
             {POPULAR_SEARCHES.map((tag) => (
@@ -156,7 +171,6 @@ const Browse = () => {
             </div>
           </div>
 
-          {/* Right side: active filter pill */}
           {localQuery && (
             <div className="ml-auto flex items-center gap-2">
               <SlidersHorizontal size={13} className="text-slate-400" />
@@ -179,14 +193,79 @@ const Browse = () => {
       <main className="flex-1 max-w-7xl mx-auto w-full px-6 py-8">
         {filteredJobs.length > 0 ? (
           <>
-            <p className="text-xs text-slate-400 font-medium uppercase tracking-widest mb-5">
-              {filteredJobs.length} {filteredJobs.length === 1 ? "Job" : "Jobs"} Found
-            </p>
+            {/* Result count + page info */}
+            <div className="flex items-center justify-between mb-5">
+              <p className="text-xs text-slate-400 font-medium uppercase tracking-widest">
+                {filteredJobs.length} {filteredJobs.length === 1 ? "Job" : "Jobs"} Found
+              </p>
+              {totalPages > 1 && (
+                <p className="text-xs text-slate-400">
+                  Page <span className="font-semibold text-slate-600">{currentPage}</span> of{" "}
+                  <span className="font-semibold text-slate-600">{totalPages}</span>
+                </p>
+              )}
+            </div>
+
+            {/* Job Grid */}
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-              {filteredJobs.map((job) => (
+              {paginatedJobs.map((job) => (
                 <Job1 key={job._id} job={job} />
               ))}
             </div>
+
+            {/* ── Pagination ── */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-center gap-1.5 mt-10">
+                {/* Prev */}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                  disabled={currentPage === 1}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-all duration-150 cursor-pointer
+                    ${currentPage === 1
+                      ? "bg-white border-slate-200 text-slate-300 cursor-not-allowed"
+                      : "bg-white border-slate-200 text-slate-600 hover:border-[#0f1f35] hover:text-[#0f1f35]"
+                    }`}
+                >
+                  <ChevronLeft size={15} />
+                  Prev
+                </button>
+
+                {/* Page Numbers */}
+                {getPageNumbers().map((page, i) =>
+                  page === "..." ? (
+                    <span key={`ellipsis-${i}`} className="w-9 h-9 flex items-center justify-center text-slate-400 text-sm select-none">
+                      ···
+                    </span>
+                  ) : (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`w-9 h-9 rounded-xl text-sm font-medium border transition-all duration-150 cursor-pointer
+                        ${currentPage === page
+                          ? "bg-[#0f1f35] border-[#0f1f35] text-white shadow-sm"
+                          : "bg-white border-slate-200 text-slate-600 hover:border-[#0f1f35] hover:text-[#0f1f35]"
+                        }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+
+                {/* Next */}
+                <button
+                  onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={currentPage === totalPages}
+                  className={`flex items-center gap-1.5 px-3 py-2 rounded-xl text-sm font-medium border transition-all duration-150 cursor-pointer
+                    ${currentPage === totalPages
+                      ? "bg-white border-slate-200 text-slate-300 cursor-not-allowed"
+                      : "bg-white border-slate-200 text-slate-600 hover:border-[#0f1f35] hover:text-[#0f1f35]"
+                    }`}
+                >
+                  Next
+                  <ChevronRight size={15} />
+                </button>
+              </div>
+            )}
           </>
         ) : (
           /* Empty State */
@@ -205,7 +284,7 @@ const Browse = () => {
             {localQuery && (
               <button
                 onClick={clearSearch}
-                className="px-5 py-2.5 bg-[#4682B4] hover:bg-[#6899c2] text-white text-sm font-semibold rounded-xl transition-all duration-150 cursor-pointer border-none"
+                className="px-5 py-2.5 bg-[#0f1f35] hover:bg-[#1a2f4a] text-white text-sm font-semibold rounded-xl transition-all duration-150 cursor-pointer border-none"
               >
                 Clear Search
               </button>

@@ -194,6 +194,26 @@ const Description = () => {
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Description — wider */}
           <div className="lg:col-span-2 bg-white border border-slate-200 rounded-2xl p-6 shadow-sm">
+            <div className="flex items-center gap-2 mb-5">
+              <span className="w-1 h-5 bg-amber-400 rounded-full" />
+              <h2 className="text-base font-bold text-[#0f1f35] tracking-tight">
+                Skills & Requirements
+              </h2>
+            {singleJob.requirements.length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {singleJob.requirements.map((item, index) => (
+                    <span
+                      key={index}
+                      className="px-3 py-1 bg-[#0f1f35]/5 border border-[#0f1f35]/10 text-[#0f1f35] text-xs font-semibold rounded-full hover:bg-amber-50 hover:border-amber-200 hover:text-amber-700 transition-all duration-150"
+                    >
+                      {item}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-sm text-slate-400 italic">No skills added yet.</p>
+              )}
+            </div>
             <div className="flex items-center gap-2 mb-4">
               <span className="w-1 h-5 bg-amber-400 rounded-full" />
               <h2 className="text-base font-bold text-[#0f1f35] tracking-tight">

@@ -40,6 +40,10 @@ const userSchema = new mongoose.Schema(
         type: String,
       },
       skills: [{ type: String }],
+      experience: {
+        type: String,
+        default: "Fresher",
+      },
       resume: {
         type: String, // URL to resume file
       },

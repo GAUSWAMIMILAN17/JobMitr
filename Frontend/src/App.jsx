@@ -20,6 +20,8 @@ import ProtectedRoute from "./components/admincomponent/ProtectedRoute";
 import Creator from "./components/components_lite/Creator.jsx";
 import JobSetup from "./components/admincomponent/JobSetup";
 import Starred from "./components/components_lite/Starred";
+import Chats from "./components/AiChats/Chats.jsx";
+import AiRecommendations from "./components/AiChats/AiRecommendations";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -66,6 +68,14 @@ const appRouter = createBrowserRouter([
   {
     path: "/StarredJobs",
     element: <Starred />
+  },
+  {
+    path: "/chat",
+    element: <Chats />,
+  },
+  {
+    path: "/aiRecommendations",
+    element: <AiRecommendations />,
   },
 
   // /admin
@@ -134,6 +144,7 @@ function App() {
   return (
     <div>
       <RouterProvider router={appRouter}></RouterProvider>
+    
     </div>
   );
 }
