@@ -212,9 +212,9 @@ npm run dev
 
 **Milan Gauswami**
 
-GitHub: [Add your GitHub profile](https://github.com/GAUSWAMIMILAN17)
+GitHub: [Click here](https://github.com/GAUSWAMIMILAN17)
 
-LinkedIn: [Add your LinkedIn profile](https://www.linkedin.com/in/milangauswami17)
+LinkedIn: [Click here](https://www.linkedin.com/in/milangauswami17)
 
 
 ---
