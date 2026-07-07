@@ -1,71 +1,224 @@
-# MERN Stack Job Portal
+# 🚀 Job Mitra - AI Powered Full Stack Job Portal
 
-Welcome to the Job Portal project! This project is a job portal application built using the MERN stack (MongoDB, Express, React, Node.js).
+A production-ready **AI-powered Job Portal** built using the MERN stack that connects **Students** and **Recruiters** on a single platform. Users can search, filter, save, and apply for jobs while recruiters can post jobs and manage applicants.
 
-## Table of Contents
+The platform also integrates **Google Gemini AI** to provide an intelligent AI assistant and personalized job recommendations.
 
-- [Project Overview](#project-overview)
-- [Features](#features)
-- [Installation](#installation)
-- [Usage](#usage)
-- [Contributing](#contributing)
-- [License](#license)
+---
 
-## Project Overview
+# 📌 Features
 
-This Job Portal application allows users to search and apply for jobs, as well as for employers to post job openings. The application is built using the MERN stack, which provides a robust and efficient development environment for full-stack applications.
+## 👨‍🎓 Student Features
 
-## Features
+* User Registration & Login
+* JWT Authentication
+* Profile Management
+* Browse Jobs
+* Search & Filter Jobs
+* Save/Unsave Jobs
+* Apply for Jobs
+* Resume Upload & Download
+* Track Application Status
+* AI Job Recommendations
+* AI Assistant Chatbot
+* Email Notifications
 
-- User authentication and authorization
-- Job listing and search functionality
-- Job application process
-- Employer dashboard for managing job postings
-- Responsive design for mobile and desktop
+---
 
-## Installation
+## 🏢 Recruiter Features
 
-To run this project locally, follow these steps:
+* Recruiter Authentication
+* Create Company Profile
+* Add New Jobs
+* Update Existing Jobs
+* View Applicants
+* Download Resumes
+* Update Application Status
+* Manage Job Listings
 
-### Backend Setup
+---
 
-1. Navigate to the backend directory:
-   ```bash
-   cd ./backend
-   ```
+# 🤖 AI Features
 
-2. Install the required dependencies:
-   ```bash
-   npm i
-   ```
+### AI Assistant
 
-3. Start the backend server:
-   ```bash
-   npm run dev
-   ```
+* Integrated Google Gemini API
+* General-purpose AI chatbot
+* Personalized responses
 
-   You should see the following messages:
-   ```
-   "Your server is running on a port"
-   "MongoDB connected..."
-   ```
+### AI Job Recommendation System
 
-### Frontend Setup
+* Suggests jobs based on user profile
+* Personalized recommendations
+* Matches user interests and skills
 
-1. Navigate to the frontend directory:
-   ```bash
-   cd ./frontend
-   ```
+---
 
-2. Install the required dependencies:
-   ```bash
-   npm i
-   ```
+# 🛠️ Tech Stack
 
-3. Start the frontend development server:
-   ```bash
-   npm run dev
-   ```
+## Frontend
+
+* React.js
+* Tailwind CSS
+* Shadcn UI
+* Axios
+* Redux Toolkit
+
+## Backend
+
+* Node.js
+* Express.js
+* MongoDB
+* Mongoose
+
+## Authentication
+
+* JWT (JSON Web Token)
+* Role-Based Access Control (RBAC)
+
+## AI Integration
+
+* Google Gemini API
+
+## Additional Tools
+
+* Nodemailer
+* Multer
+* Cloudinary
+  
+---
+
+# 🔐 Authentication & Security
+
+* JWT Authentication
+* Protected Routes
+* HTTP Only Cookies
+* Role-Based Access Control
+* Input Validation
+* Secure API Handling
+
+---
+
+# ⚡ Performance Optimizations
+
+* Pagination
+* Efficient MongoDB Queries
+* Search Filters
+* Optimized API Responses
+* Clean Folder Structure
+* Scalable Architecture
+
+---
+
+# 📧 Email Notification System
+
+The system automatically sends notifications for:
+
+* New Job Postings
+* Application Updates
+* Recruiter Actions
+
+---
+
+# 🖼️ Screenshots
+
+### 🏠 Home Page
+
+<img width="1817" height="853" alt="image" src="https://github.com/user-attachments/assets/292dee94-104f-479f-a574-d4c6a601c9f8" />
 
 
 
+### 🤖 AI Assistant
+
+<img width="1836" height="857" alt="image" src="https://github.com/user-attachments/assets/657ef167-2c17-4215-b6a6-9c0f19c1b587" />
+
+
+### 🎯 AI Job Recommendation
+
+<img width="1871" height="841" alt="image" src="https://github.com/user-attachments/assets/fbf8a110-40a1-4e50-8a09-504317b188bc" />
+
+
+### 👤 Student Dashboard
+
+<img width="1896" height="857" alt="image" src="https://github.com/user-attachments/assets/48b92a0b-c263-4721-a08b-afcd26e5565e" />
+
+
+
+### 🏢 Recruiter Dashboard
+
+<img width="1871" height="838" alt="image" src="https://github.com/user-attachments/assets/676b3338-c518-4102-adf4-3557cad80e5e" />
+
+---
+
+# 🚀 Installation
+
+## Clone Repository
+
+```bash
+git clone https://github.com/yourusername/job-mitra.git
+
+cd job-mitra
+```
+
+## Install Dependencies
+
+### Frontend
+
+```bash
+cd client
+
+npm install
+
+npm run dev
+```
+
+### Backend
+
+```bash
+cd server
+
+npm install
+
+npm run dev
+```
+
+---
+
+# 🧪 Future Improvements
+
+* AI Resume Analyzer
+* AI Mock Interview System
+* AI Skill Gap Analysis
+* Company Reviews
+* Real-Time Chat
+* Interview Scheduling
+* Admin Dashboard
+
+---
+
+# 📈 Resume Highlights
+
+* AI-powered MERN Job Portal
+* JWT Authentication & RBAC
+* Google Gemini Integration
+* AI Job Recommendation System
+* Email Automation
+* Resume Management
+* Scalable Backend Architecture
+
+---
+
+# 👨‍💻 Author
+
+**Milan Gauswami**
+
+GitHub: [Click here](https://github.com/GAUSWAMIMILAN17)
+
+LinkedIn: [Click here](https://www.linkedin.com/in/milangauswami17)
+
+
+---
+
+# ⭐ Support
+
+If you like this project, give it a ⭐ on GitHub.
