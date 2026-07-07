@@ -183,8 +183,18 @@ const Login = () => {
                 )}
               </button>
 
+              
               {/* Sign up link */}
               <p className="text-center text-sm text-slate-500 pt-1">
+                <p className="text-center text-sm text-slate-500 pt-1">
+                Don't remeber password ?{" "}
+                <Link
+                  to="/forgot-password"
+                  className="font-bold text-[#0f1f35] hover:text-amber-500 transition-colors duration-150"
+                >
+                  Forgot Password?
+                </Link>
+                </p>
                 Don't have an account?{" "}
                 <Link
                   to="/register"
@@ -192,6 +202,7 @@ const Login = () => {
                 >
                   Sign Up
                 </Link>
+                
               </p>
             </form>
           </div>

@@ -265,6 +265,84 @@ export const updateProfile = async (req, res) => {
   }
 };
 
+export const verifyEmail = async (req, res) => {
+  try {
+    const { email, role } = req.body;
+
+    if (!email || !role) {
+      return res.status(400).json({
+        success: false,
+        message: "Email and role are required",
+      });
+    }
+
+    const user = await User.findOne({ email, role });
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid email or role",
+      });
+    }
+
+    return res.status(200).json({
+      success: true,
+      message: "User verified",
+      userId: user._id,
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+export const forgotPassword = async (req, res) => {
+  try {
+    const { userId, newPassword } = req.body;
+
+    if (!userId || !newPassword) {
+      return res.status(400).json({
+        success: false,
+        message: "All fields are required",
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "User not found",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(newPassword, 10);
+
+    user.password = hashedPassword;
+
+    await user.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Password changed successfully",
+    });
+
+  } catch (error) {
+    console.log(error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Server Error",
+    });
+  }
+};
+
+
 // import { User } from "../models/user.model.js";
 // import bcrypt from "bcryptjs";
 // import jwt from "jsonwebtoken";

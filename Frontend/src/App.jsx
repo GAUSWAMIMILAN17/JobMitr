@@ -22,6 +22,7 @@ import JobSetup from "./components/admincomponent/JobSetup";
 import Starred from "./components/components_lite/Starred";
 import Chats from "./components/AiChats/Chats.jsx";
 import AiRecommendations from "./components/AiChats/AiRecommendations";
+import ForgotPass from "./components/authentication/ForgotPass";
 
 const appRouter = createBrowserRouter([
   { path: "/", element: <Home /> },
@@ -32,6 +33,10 @@ const appRouter = createBrowserRouter([
   {
     path: "/register",
     element: <Register />,
+  },
+  {
+    path: "/forgot-password",
+    element: <ForgotPass />,
   },
   {
     path: "/description/:id",
