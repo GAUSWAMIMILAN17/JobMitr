@@ -17,6 +17,30 @@ export const applyJob = async (req, res) => {
         .status(400)
         .json({ message: "Invalid job id", success: false });
     }
+
+    //deadline check
+    if (
+      job.applicationDeadline &&
+      new Date(job.applicationDeadline) <= new Date()
+    ) {
+      // Automatically close it
+      job.status = "Closed";
+      await job.save();
+
+      return res.status(400).json({
+        success: false,
+        message: "Application deadline has expired",
+      });
+    }
+
+    // Check job status
+    if (job.status !== "Active") {
+      return res.status(400).json({
+        success: false,
+        message: "This job is no longer accepting applications",
+      });
+    }
+
     // check if the user already has applied for this job
     const existingApplication = await Application.findOne({
       job: jobId,

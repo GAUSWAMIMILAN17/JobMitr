@@ -8,6 +8,8 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import chatRoute from "./routes/chat.route.js";
+import cron from "node-cron";
+import { closeExpiredJobs } from "./utils/checkExpiredJobs.js";
 
 dotenv.config({});
 const app = express();
@@ -18,8 +20,8 @@ app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 
 const corsOptions = {
-  // origin: ["http://localhost:5173"],
-  origin: ["https://jobmitr-1.onrender.com"],
+  origin: ["http://localhost:5173"],
+  // origin: ["https://jobmitr-1.onrender.com"],
   credentials: true,
 };
 
@@ -37,7 +39,14 @@ app.use("/api/job", jobRoute);
 app.use("/api/application", applicationRoute);
 app.use("/api/chat", chatRoute);
 
+
 app.listen(PORT, () => {
-  connectDB();
   console.log(`Server is running on port ${PORT}`);
+});
+
+await connectDB();
+
+// Check expired jobs every minute
+cron.schedule("* * * * *", async () => {
+  await closeExpiredJobs();
 });

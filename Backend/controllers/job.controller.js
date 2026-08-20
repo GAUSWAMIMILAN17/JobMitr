@@ -2,6 +2,8 @@ import { Job } from "../models/job.model.js";
 import { User } from "../models/user.model.js";
 import sendEmail from "../utils/sendEmail.js";
 import { Application } from "../models/application.model.js";
+
+
 //Admin job posting
 export const postJob = async (req, res) => {
   try {
@@ -18,6 +20,7 @@ export const postJob = async (req, res) => {
       applicationDeadline, //New
     } = req.body;
     const userId = req.id;
+    // console.log("User ID:", userId);
 
     if (
       !title ||
@@ -40,14 +43,20 @@ export const postJob = async (req, res) => {
     const users = await User.find({
       role: "Student",
     });
-    //  console.log(users)
-    if (new Date(applicationDeadline) <= new Date()) {
+     
+
+    const currentDate = new Date();
+    const deadlineDate = new Date(applicationDeadline);
+    // console.log(deadlineDate, currentDate);
+    currentDate.setHours(0, 0, 0, 0);
+    deadlineDate.setHours(0, 0, 0, 0);
+
+    if (deadlineDate < currentDate) {
       return res.status(400).json({
-        message: "Application deadline must be in the future",
+        message: "Application deadline cannot be before today",
         success: false,
       });
     }
-
     const job = await Job.create({
       title,
       description,
@@ -60,6 +69,7 @@ export const postJob = async (req, res) => {
       company: companyId,
       created_by: userId,
       applicationDeadline: new Date(applicationDeadline),
+      status: "ACTIVE",
     });
 
     for (const user of users) {
@@ -250,13 +260,12 @@ export const updateJobs = async (req, res) => {
       job.requirements = requirements;
     }
 
-    if (experience !== undefined && experience!== "") {
+    if (experience !== undefined && experience !== "") {
       job.experience = Number(experience);
     }
     if (jobType !== undefined) {
       job.jobType = jobType;
     }
-
 
     if (applicationDeadline !== undefined && applicationDeadline !== "") {
       job.applicationDeadline = new Date(applicationDeadline);
@@ -264,7 +273,10 @@ export const updateJobs = async (req, res) => {
       const currentDate = new Date();
       const newDeadline = new Date(applicationDeadline);
 
-      if (newDeadline > currentDate) {
+      currentDate.setHours(0, 0, 0, 0);
+      newDeadline.setHours(0, 0, 0, 0);
+
+      if (newDeadline >= currentDate) {
         job.status = "ACTIVE";
       } else {
         return res.status(400).json({
@@ -274,9 +286,7 @@ export const updateJobs = async (req, res) => {
       }
     }
 
-
     await job.save();
-
 
     const updatedJob = {
       _id: job._id,

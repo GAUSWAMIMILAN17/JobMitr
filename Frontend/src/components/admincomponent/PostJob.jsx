@@ -79,8 +79,11 @@ const PostJob = () => {
     // Check application deadline
     const selectedDeadline = new Date(input.applicationDeadline);
     const currentDate = new Date();
+    console.log(selectedDeadline, currentDate);
+    selectedDeadline.setHours(0, 0, 0, 0);
+    currentDate.setHours(0, 0, 0, 0);
 
-    if (selectedDeadline <= currentDate) {
+    if (selectedDeadline < currentDate) {
       toast.error("Application deadline must be in the future.");
       return;
     }
@@ -101,7 +104,7 @@ const PostJob = () => {
 
       companyId: input.companyId,
 
-      applicationDeadline: selectedDeadline.toISOString(),
+      applicationDeadline: input.applicationDeadline, // Convert to ISO string for backend
     };
 
     try {
