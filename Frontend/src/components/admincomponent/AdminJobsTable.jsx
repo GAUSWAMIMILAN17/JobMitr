@@ -1,15 +1,20 @@
 import React, { useEffect, useState } from "react";
-import { Edit2, Eye, Briefcase, Search, Users } from "lucide-react";
-import { useSelector } from "react-redux";
+import { Edit2, Eye, Briefcase, Search, Users, Trash2 } from "lucide-react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { Button } from "../ui/button";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { useSearchParams } from "react-router-dom";
+import axios from "axios";
+import { toast } from "sonner";
+import { JOB_API_ENDPOINT } from "@/utils/data";
+import { setAllAdminJobs } from "@/redux/jobSlice";
 
 const AdminJobsTable = () => {
   const { allAdminJobs, searchJobByText } = useSelector((store) => store.job);
   const navigate = useNavigate();
   const [filterJobs, setFilterJobs] = useState(allAdminJobs);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     const filtered =
@@ -17,24 +22,56 @@ const AdminJobsTable = () => {
         if (!searchJobByText) return true;
         return (
           job.title?.toLowerCase().includes(searchJobByText.toLowerCase()) ||
-          job?.company?.name?.toLowerCase().includes(searchJobByText.toLowerCase())
+          job?.company?.name
+            ?.toLowerCase()
+            .includes(searchJobByText.toLowerCase())
         );
       }) || [];
     setFilterJobs(filtered);
   }, [allAdminJobs, searchJobByText]);
 
+  const handleDeleteJob = async (jobId) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure? This will delete the job and all applications.",
+      );
+
+      if (!confirmDelete) return;
+
+      const response = await axios.delete(
+        `${JOB_API_ENDPOINT}/deleteJob/${jobId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.data.status) {
+        toast.success(response.data.message);
+        // console.log("Job deleted successfully:", response.data);
+        // Remove deleted job from UI immediately
+        dispatch(
+        setAllAdminJobs(
+          allAdminJobs.filter((job) => job._id !== jobId)
+        )
+      );
+      }
+    } catch (error) {
+      console.error(error);
+
+      toast.error(error.response?.data?.message || "Failed to delete job");
+    }
+  };
+
   const jobTypeStyles = {
-    "Full-time":  "bg-blue-50 text-blue-700 border-blue-200",
-    "Part-time":  "bg-purple-50 text-purple-700 border-purple-200",
-    "Remote":     "bg-teal-50 text-teal-700 border-teal-200",
-    "Hybrid":     "bg-indigo-50 text-indigo-700 border-indigo-200",
-    "Internship": "bg-pink-50 text-pink-700 border-pink-200",
+    "Full-time": "bg-blue-50 text-blue-700 border-blue-200",
+    "Part-time": "bg-purple-50 text-purple-700 border-purple-200",
+    Remote: "bg-teal-50 text-teal-700 border-teal-200",
+    Hybrid: "bg-indigo-50 text-indigo-700 border-indigo-200",
+    Internship: "bg-pink-50 text-pink-700 border-pink-200",
   };
 
   const getJobTypeClass = (type) =>
     jobTypeStyles[type] || "bg-slate-100 text-slate-600 border-slate-200";
-
-  
 
   const avatarColors = [
     ["bg-blue-100", "text-blue-700"],
@@ -100,7 +137,7 @@ const AdminJobsTable = () => {
                 >
                   {col}
                 </th>
-              )
+              ),
             )}
           </tr>
         </thead>
@@ -123,14 +160,14 @@ const AdminJobsTable = () => {
                 <td className="px-6 py-4">
                   <div className="flex items-center gap-3">
                     <div
-                              className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 ${avatarBg} ${avatarText}`}
-                            >
-                              <Button className="p-6" variant="outline" size="icon">
-                                        <Avatar>
-                                          <AvatarImage src={job?.company?.logo} />
-                                        </Avatar>
-                                      </Button>
-                            </div>
+                      className={`w-10 h-10 rounded-xl flex items-center justify-center text-sm font-bold flex-shrink-0 ${avatarBg} ${avatarText}`}
+                    >
+                      <Button className="p-6" variant="outline" size="icon">
+                        <Avatar>
+                          <AvatarImage src={job?.company?.logo} />
+                        </Avatar>
+                      </Button>
+                    </div>
                     <span className="text-sm font-semibold text-[#0f1f35]">
                       {companyName}
                     </span>
@@ -171,7 +208,7 @@ const AdminJobsTable = () => {
 
                 {/* Actions */}
                 <td className="px-6 py-4">
-                  <div className="flex items-center justify-end gap-2 opacity-0 group-hover:opacity-100 transition-opacity duration-150">
+                  <div className="flex items-center justify-end gap-2  transition-opacity duration-150">
                     <button
                       onClick={() => navigate(`/admin/jobs/${job._id}`)}
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-[#0f1f35] bg-white border border-slate-200 rounded-lg hover:bg-[#0f1f35] hover:text-white hover:border-[#0f1f35] active:scale-95 transition-all duration-150"
@@ -180,11 +217,20 @@ const AdminJobsTable = () => {
                       Edit
                     </button>
                     <button
-                      onClick={() => navigate(`/admin/jobs/${job._id}/applicants`)}
+                      onClick={() =>
+                        navigate(`/admin/jobs/${job._id}/applicants`)
+                      }
                       className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-amber-700 bg-amber-50 border border-amber-200 rounded-lg hover:bg-amber-400 hover:text-[#0f1f35] hover:border-amber-400 active:scale-95 transition-all duration-150"
                     >
                       <Users size={11} />
                       Applicants
+                    </button>
+                    <button
+                       onClick={() => handleDeleteJob(job._id)}
+                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-semibold text-white bg-red-500 border border-slate-200 rounded-lg hover:bg-[#0f1f35] hover:text-white hover:border-[#0f1f35] active:scale-95 transition-all duration-150"
+                    >
+                      <Trash2 size={11} />
+                      Delete
                     </button>
                   </div>
                 </td>

@@ -1,6 +1,7 @@
 import { Job } from "../models/job.model.js";
 import { User } from "../models/user.model.js";
 import sendEmail from "../utils/sendEmail.js";
+import { Application } from "../models/application.model.js";
 //Admin job posting
 export const postJob = async (req, res) => {
   try {
@@ -14,6 +15,7 @@ export const postJob = async (req, res) => {
       experience,
       position,
       companyId,
+      applicationDeadline, //New
     } = req.body;
     const userId = req.id;
 
@@ -26,7 +28,8 @@ export const postJob = async (req, res) => {
       !jobType ||
       !experience ||
       !position ||
-      !companyId
+      !companyId ||
+      !applicationDeadline //New
     ) {
       return res.status(400).json({
         message: "All fields are required",
@@ -35,9 +38,15 @@ export const postJob = async (req, res) => {
     }
 
     const users = await User.find({
-      role: "Student"
-   });
-  //  console.log(users)
+      role: "Student",
+    });
+    //  console.log(users)
+    if (new Date(applicationDeadline) <= new Date()) {
+      return res.status(400).json({
+        message: "Application deadline must be in the future",
+        success: false,
+      });
+    }
 
     const job = await Job.create({
       title,
@@ -50,15 +59,15 @@ export const postJob = async (req, res) => {
       position,
       company: companyId,
       created_by: userId,
+      applicationDeadline: new Date(applicationDeadline),
     });
 
     for (const user of users) {
+      await sendEmail(
+        user.email,
+        "🚀 New Job Opportunity",
 
-  await sendEmail(
-    user.email,
-    "🚀 New Job Opportunity",
-
-    `
+        `
       <div style="font-family: Arial; padding:20px;">
 
         <h2 style="color:#2563eb;">
@@ -84,7 +93,7 @@ export const postJob = async (req, res) => {
         <br/>
 
         <a 
-          href="http://localhost:5173/jobs"
+          href="https://jobmitr-1.onrender.com/description/${job._id}"
           style="
             background:#2563eb;
             color:white;
@@ -104,9 +113,9 @@ export const postJob = async (req, res) => {
         </p>
 
       </div>
-    `
-  );
-}
+    `,
+      );
+    }
 
     res.status(201).json({
       message: "Job posted successfully.",
@@ -243,12 +252,10 @@ export const updateJobs = async (req, res) => {
 // star job
 export const starJob = async (req, res) => {
   try {
-
     const userId = req.id;
     const jobId = req.params.id;
 
     const user = await User.findById(userId);
-
 
     if (!user) {
       return res.status(404).json({
@@ -259,7 +266,7 @@ export const starJob = async (req, res) => {
 
     // already saved check
     const isSaved = user.profile.savedJobs.some(
-      (id) => id.toString() === jobId
+      (id) => id.toString() === jobId,
     );
 
     // jo saved na hoy to add karo
@@ -282,9 +289,7 @@ export const starJob = async (req, res) => {
       message: "Job starred successfully",
       starredJobs: updatedUser.profile.savedJobs,
     });
-
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
@@ -329,7 +334,6 @@ export const getStarredJobs = async (req, res) => {
 // remove star job
 export const removeStarredJob = async (req, res) => {
   try {
-
     const userId = req.id;
     const jobId = req.params.id;
 
@@ -344,7 +348,7 @@ export const removeStarredJob = async (req, res) => {
 
     // remove job from savedJobs
     user.profile.savedJobs = user.profile.savedJobs.filter(
-      (id) => id.toString() !== jobId
+      (id) => id.toString() !== jobId,
     );
 
     await user.save();
@@ -363,13 +367,52 @@ export const removeStarredJob = async (req, res) => {
       message: "Job removed from starred",
       starredJobs: updatedUser.profile.savedJobs,
     });
-
   } catch (error) {
-
     console.log(error);
 
     return res.status(500).json({
       message: "Server Error",
+      status: false,
+    });
+  }
+};
+
+
+// Admin delete job with all applications
+export const deleteJob = async (req, res) => {
+  try {
+    const adminId = req.id;
+    const jobId = req.params.jobId;
+
+    const job = await Job.findOne({
+      _id: jobId,
+      created_by: adminId,
+    });
+
+
+    if (!job) {
+      return res.status(404).json({
+        message: "Job not found or unauthorized",
+        status: false,
+      });
+    }
+
+    const deletedApplications = await Application.deleteMany({
+      job: jobId,
+    });
+
+    const deletedJob = await Job.findByIdAndDelete(jobId);
+
+
+    return res.status(200).json({
+      message: "Job and all applications deleted successfully",
+      status: true,
+    });
+
+  } catch (error) {
+
+    return res.status(500).json({
+      message: error.message,
       status: false,
     });
   }

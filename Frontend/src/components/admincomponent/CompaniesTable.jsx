@@ -1,16 +1,52 @@
 import React, { useEffect, useState } from "react";
 import { Avatar, AvatarImage } from "../ui/avatar";
 import { Edit2, Building2, Search } from "lucide-react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { COMPANY_API_ENDPOINT } from "@/utils/data";
+import axios from "axios";
+import { setCompanies } from "@/redux/companyslice";
+import { toast } from "sonner";
 
 const CompaniesTable = () => {
   const { companies, searchCompanyByText } = useSelector(
-    (store) => store.company
+    (store) => store.company,
   );
-
+  const dispatch = useDispatch();
   const navigate = useNavigate();
   const [filterCompany, setFilterCompany] = useState(companies);
+
+  const handleDeleteCompany = async (companyId) => {
+    try {
+      const confirmDelete = window.confirm(
+        "Are you sure? This will delete the company, all its jobs, and all applications.",
+      );
+
+      if (!confirmDelete) return;
+
+      const response = await axios.delete(
+        `${COMPANY_API_ENDPOINT}/delete/${companyId}`,
+        {
+          withCredentials: true,
+        },
+      );
+
+      if (response.data.status) {
+        toast.success(response.data.message);
+
+        // Immediately update Redux
+        dispatch(
+          setCompanies(
+            companies.filter((company) => company._id !== companyId),
+          ),
+        );
+      }
+    } catch (error) {
+      console.error("Delete company error:", error);
+
+      toast.error(error.response?.data?.message || "Failed to delete company");
+    }
+  };
 
   useEffect(() => {
     const filtered =
@@ -53,9 +89,7 @@ const CompaniesTable = () => {
       <div className="flex items-center justify-center py-16 gap-3">
         <div className="w-8 h-8 rounded-full border-[3px] border-slate-200 border-t-[#0f1f35] animate-spin" />
 
-        <p className="text-sm text-slate-400 font-medium">
-          Loading companies…
-        </p>
+        <p className="text-sm text-slate-400 font-medium">Loading companies…</p>
       </div>
     );
   }
@@ -103,7 +137,7 @@ const CompaniesTable = () => {
                 >
                   {col}
                 </th>
-              )
+              ),
             )}
           </tr>
         </thead>
@@ -171,13 +205,18 @@ const CompaniesTable = () => {
                 {/* Action */}
                 <td className="px-6 py-4 text-right">
                   <button
-                    onClick={() =>
-                      navigate(`/admin/companies/${company._id}`)
-                    }
-                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#0f1f35] bg-white border border-slate-200 rounded-lg hover:bg-[#0f1f35] hover:text-white hover:border-[#0f1f35] active:scale-95 transition-all duration-150 opacity-0 group-hover:opacity-100"
+                    onClick={() => navigate(`/admin/companies/${company._id}`)}
+                    className="inline-flex mr-2 items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-[#0f1f35] bg-white border border-slate-200 rounded-lg hover:bg-[#0f1f35] hover:text-white hover:border-[#0f1f35] active:scale-95 transition-all duration-150"
                   >
                     <Edit2 size={12} />
                     Edit
+                  </button>
+                  <button
+                    onClick={() => handleDeleteCompany(company._id)}
+                    className="inline-flex items-center gap-1.5 px-3.5 py-1.5 text-xs font-semibold text-white bg-red-500 border border-slate-200 rounded-lg hover:bg-red-400 hover:text-white hover:border-[#0f1f35] active:scale-95 transition-all duration-150"
+                  >
+                    <Edit2 size={12} />
+                    Delete
                   </button>
                 </td>
               </tr>

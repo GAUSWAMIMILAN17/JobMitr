@@ -51,6 +51,19 @@ const jobSchema = new mongoose.Schema(
         ref: "Application",
       },
     ],
+
+    //   // NEW
+    // applicationDeadline: {
+    //   type: Date,
+    //   required: true,
+    // },
+
+    // // NEW
+    // status: {
+    //   type: String,
+    //   enum: ["ACTIVE", "CLOSED"],
+    //   default: "ACTIVE",
+    // },
   },
   { timestamps: true }
 );

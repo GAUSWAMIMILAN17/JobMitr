@@ -9,7 +9,8 @@ import {
   updateJobs,
   starJob,
   getStarredJobs,
-  removeStarredJob
+  removeStarredJob,
+  deleteJob
 } from "../controllers/job.controller.js";
 // import sendEmail from "../utils/sendEmail.js";
 
@@ -24,6 +25,7 @@ router.route("/update/:id").put(authenticateToken, updateJobs);
 router.route("/starJob/:id").post(authenticateToken, starJob);
 router.route("/getStarredJobs").get(authenticateToken, getStarredJobs);
 router.route("/removeStarredJob/:id").delete(authenticateToken, removeStarredJob);
+router.route("/deleteJob/:jobId").delete(authenticateToken, deleteJob);
 
 
 // router.get("/test-email", async(req,res)=>{
