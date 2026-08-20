@@ -8,8 +8,8 @@ import companyRoute from "./routes/company.route.js";
 import jobRoute from "./routes/job.route.js";
 import applicationRoute from "./routes/application.route.js";
 import chatRoute from "./routes/chat.route.js";
-import cron from "node-cron";
-import { closeExpiredJobs } from "./utils/checkExpiredJobs.js";
+// import cron from "node-cron";
+// import { closeExpiredJobs } from "./utils/checkExpiredJobs.js";
 
 dotenv.config({});
 const app = express();
@@ -46,6 +46,6 @@ app.listen(PORT, () => {
 });
 
 // Check expired jobs every minute
-cron.schedule("* * * * *", async () => {
-  await closeExpiredJobs();
-});
+// cron.schedule("* * * * *", async () => {
+//   await closeExpiredJobs();
+// });
