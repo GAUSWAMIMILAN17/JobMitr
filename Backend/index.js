@@ -46,6 +46,6 @@ app.listen(PORT, () => {
 });
 
 // Check expired jobs every minute
-// cron.schedule("* * * * *", async () => {
-//   await closeExpiredJobs();
-// });
+cron.schedule("* * * * *", async () => {
+  await closeExpiredJobs();
+});
