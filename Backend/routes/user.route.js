@@ -5,6 +5,7 @@ import {
   logout,
   register,
   updateProfile,
+  uploadResume,
   verifyEmail,
 } from "../controllers/user.controller.js";
 import authenticateToken from "../middleware/isAuthenticated.js";
@@ -20,5 +21,7 @@ router.route("/forgot-password").post(forgotPassword);
 router
   .route("/profile/update")
   .post(authenticateToken, singleUpload, updateProfile);
+
+router.route("/uploadResume").post(authenticateToken, singleUpload, uploadResume);
 
 export default router;

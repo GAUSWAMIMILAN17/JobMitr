@@ -1,5 +1,6 @@
 import { Application } from "../models/application.model.js";
 import { Job } from "../models/job.model.js";
+import { User } from "../models/user.model.js";
 
 export const applyJob = async (req, res) => {
   try {
@@ -27,6 +28,16 @@ export const applyJob = async (req, res) => {
         success: false,
       });
     }
+
+    //resume required
+    const user = await User.findById(userId);
+    if (!user.profile.resume) {
+      return res.status(400).json({
+        message: "Please upload your resume before applying for this job",
+        success: false,
+      });
+    }
+
     //check if the job exists or not
     const job = await Job.findById(jobId);
     if (!job) {

@@ -199,7 +199,7 @@ const Description = () => {
               <h2 className="text-base font-bold text-[#0f1f35] tracking-tight">
                 Skills & Requirements
               </h2>
-            {singleJob.requirements.length > 0 ? (
+              {singleJob.requirements.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {singleJob.requirements.map((item, index) => (
                     <span
@@ -211,7 +211,9 @@ const Description = () => {
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-400 italic">No skills added yet.</p>
+                <p className="text-sm text-slate-400 italic">
+                  No skills added yet.
+                </p>
               )}
             </div>
             <div className="flex items-center gap-2 mb-4">
@@ -252,7 +254,7 @@ const Description = () => {
               />
               <InfoRow
                 label="Experience"
-                value={`${singleJob?.experienceLevel} Year${singleJob?.experienceLevel > 1 ? "s" : ""}`}
+                value={`${singleJob?.experience} Year${singleJob?.experience > 1 ? "s" : ""}`}
                 icon={Clock}
               />
               <InfoRow

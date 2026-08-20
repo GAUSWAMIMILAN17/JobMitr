@@ -208,17 +208,6 @@ export const updateProfile = async (req, res) => {
     if (bio) user.profile.bio = bio;
     if (skills) user.profile.skills = skills.split(",");
 
-    // if (file) {
-    //   // const fileUri = getDataUri(file);
-    //   const cloudResponse = await cloudinary.uploader.upload(fileUri.content, {
-    //     resource_type: "raw",
-    //     folder: "file"
-    //   });
-    //   user.profile.resume = cloudResponse.secure_url;
-    //   console.log(user?.profile?.resume);
-
-    //   user.profile.resumeOriginalName = file.originalname;
-    // }
     if (file) {
       const uploadResult = await new Promise((resolve, reject) => {
         const stream = cloudinary.uploader.upload_stream(
@@ -342,6 +331,83 @@ export const forgotPassword = async (req, res) => {
   }
 };
 
+//upload resume
+export const uploadResume = async (req, res) => {
+  try {
+    const file = req.file;
+    const userId = req.id;
+
+    if (!file) {
+      return res.status(400).json({
+        message: "Resume file is required",
+        success: false,
+      });
+    }
+
+    // Only PDF
+    if (file.mimetype !== "application/pdf") {
+      return res.status(400).json({
+        message: "Only PDF files are allowed",
+        success: false,
+      });
+    }
+
+    // Maximum 5MB
+    if (file.size > 5 * 1024 * 1024) {
+      return res.status(400).json({
+        message: "Resume size must be less than 5MB",
+        success: false,
+      });
+    }
+
+    const user = await User.findById(userId);
+
+    if (!user) {
+      return res.status(404).json({
+        message: "User not found",
+        success: false,
+      });
+    }
+
+    const uploadResult = await new Promise((resolve, reject) => {
+      const stream = cloudinary.uploader.upload_stream(
+        {
+          resource_type: "raw",
+          folder: "resumes",
+        },
+        (error, result) => {
+          if (error) {
+            reject(error);
+          } else {
+            resolve(result);
+          }
+        }
+      );
+
+      stream.end(file.buffer);
+    });
+
+    user.profile.resume = uploadResult.secure_url;
+    user.profile.resumeOriginalName = file.originalname;
+
+    await user.save();
+
+    return res.status(200).json({
+      message: "Resume uploaded successfully",
+      success: true,
+      resume: user.profile.resume,
+      resumeOriginalName: user.profile.resumeOriginalName,
+    });
+
+  } catch (error) {
+    console.error("Resume upload error:", error);
+
+    return res.status(500).json({
+      message: "Server Error uploading resume",
+      success: false,
+    });
+  }
+};
 
 // import { User } from "../models/user.model.js";
 // import bcrypt from "bcryptjs";

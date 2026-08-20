@@ -132,27 +132,40 @@ export const postJob = async (req, res) => {
 export const getAllJobs = async (req, res) => {
   try {
     const keyword = req.query.keyword || "";
+
     const query = {
+      status: "ACTIVE",
       $or: [
-        { title: { $regex: keyword, $options: "i" } },
-        { description: { $regex: keyword, $options: "i" } },
+        {
+          title: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
+        {
+          description: {
+            $regex: keyword,
+            $options: "i",
+          },
+        },
       ],
     };
+
     const jobs = await Job.find(query)
-      .populate({
-        path: "company",
-      })
+      .populate("company")
       .sort({ createdAt: -1 });
 
-    // console.log(jobs)
-
-    if (!jobs) {
-      return res.status(404).json({ message: "No jobs found", status: false });
-    }
-    return res.status(200).json({ jobs, status: true });
+    return res.status(200).json({
+      jobs,
+      status: true,
+    });
   } catch (error) {
-    console.error(error);
-    return res.status(500).json({ message: "Server Error", status: false });
+    console.error("Get All Jobs Error:", error);
+
+    return res.status(500).json({
+      message: "Server Error",
+      status: false,
+    });
   }
 };
 
