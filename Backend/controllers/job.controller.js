@@ -55,7 +55,7 @@ export const postJob = async (req, res) => {
       salary: Number(salary),
       location,
       jobType,
-      experienceLevel: experience,
+      experience: experience,
       position,
       company: companyId,
       created_by: userId,
@@ -86,7 +86,7 @@ export const postJob = async (req, res) => {
 
         <p><strong>Job Type:</strong> ${job.jobType}</p>
 
-        <p><strong>Experience:</strong> ${job.experienceLevel} years</p>
+        <p><strong>Experience:</strong> ${job.experience} years</p>
 
         <p><strong>Requirements:</strong> ${job.requirements.join(", ")}</p>
 
@@ -175,7 +175,6 @@ export const getJobById = async (req, res) => {
 };
 
 //Admin job created
-
 export const getAdminJobs = async (req, res) => {
   try {
     const adminId = req.id;
@@ -203,25 +202,68 @@ export const updateJobs = async (req, res) => {
       salary,
       position,
       requirements,
-      experienceLevel,
+      experience,
       jobType,
+      applicationDeadline,
     } = req.body;
-    // console.log(title);
+
     const jobId = req.params.id;
+
     const job = await Job.findById(jobId);
+
     if (!job) {
-      return res.status(404).json({ message: "Job not found", status: false });
+      return res.status(404).json({
+        message: "Job not found",
+        success: false,
+      });
     }
-    if (title) job.title = title;
-    if (description) job.description = description;
-    if (location) job.location = location;
-    if (salary) job.salary = Number(salary);
-    if (position) job.position = Number(position);
-    if (requirements) job.requirements = requirements;
-    if (experienceLevel) job.experienceLevel = Number(experienceLevel);
-    if (jobType) job.jobType = jobType;
+
+    if (title !== undefined) {
+      job.title = title;
+    }
+    if (description !== undefined) {
+      job.description = description;
+    }
+    if (location !== undefined) {
+      job.location = location;
+    }
+    if (salary !== undefined && salary !== "") {
+      job.salary = Number(salary);
+    }
+    if (position !== undefined && position !== "") {
+      job.position = Number(position);
+    }
+    if (requirements !== undefined) {
+      job.requirements = requirements;
+    }
+
+    if (experience !== undefined && experience!== "") {
+      job.experience = Number(experience);
+    }
+    if (jobType !== undefined) {
+      job.jobType = jobType;
+    }
+
+
+    if (applicationDeadline !== undefined && applicationDeadline !== "") {
+      job.applicationDeadline = new Date(applicationDeadline);
+
+      const currentDate = new Date();
+      const newDeadline = new Date(applicationDeadline);
+
+      if (newDeadline > currentDate) {
+        job.status = "ACTIVE";
+      } else {
+        return res.status(400).json({
+          message: "Application deadline must be in the future",
+          success: false,
+        });
+      }
+    }
+
 
     await job.save();
+
 
     const updatedJob = {
       _id: job._id,
@@ -231,8 +273,12 @@ export const updateJobs = async (req, res) => {
       salary: job.salary,
       position: job.position,
       requirements: job.requirements,
-      experienceLevel: job.experienceLevel,
+      experience: job.experience,
       jobType: job.jobType,
+      applicationDeadline: job.applicationDeadline,
+      status: job.status,
+      createdAt: job.createdAt,
+      updatedAt: job.updatedAt,
     };
 
     return res.status(200).json({
@@ -241,9 +287,10 @@ export const updateJobs = async (req, res) => {
       success: true,
     });
   } catch (error) {
-    console.log(error);
-    res.status(500).json({
-      message: "Server Error updating profile",
+    console.error("Update Job Error:", error);
+
+    return res.status(500).json({
+      message: "Server Error updating job",
       success: false,
     });
   }
@@ -377,7 +424,6 @@ export const removeStarredJob = async (req, res) => {
   }
 };
 
-
 // Admin delete job with all applications
 export const deleteJob = async (req, res) => {
   try {
@@ -388,7 +434,6 @@ export const deleteJob = async (req, res) => {
       _id: jobId,
       created_by: adminId,
     });
-
 
     if (!job) {
       return res.status(404).json({
@@ -403,17 +448,55 @@ export const deleteJob = async (req, res) => {
 
     const deletedJob = await Job.findByIdAndDelete(jobId);
 
-
     return res.status(200).json({
       message: "Job and all applications deleted successfully",
       status: true,
     });
-
   } catch (error) {
-
     return res.status(500).json({
       message: error.message,
       status: false,
+    });
+  }
+};
+
+// Admin - Close Job
+export const closeJob = async (req, res) => {
+  try {
+    const jobId = req.params.jobId;
+
+    const job = await Job.findById(jobId);
+
+    if (!job) {
+      return res.status(404).json({
+        success: false,
+        message: "Job not found",
+      });
+    }
+
+    // Already closed
+    if (job.status === "CLOSED") {
+      return res.status(400).json({
+        success: false,
+        message: "Job is already closed",
+      });
+    }
+
+    job.status = "CLOSED";
+
+    await job.save();
+
+    return res.status(200).json({
+      success: true,
+      message: "Job closed successfully",
+      job,
+    });
+  } catch (error) {
+    console.error("Close Job Error:", error);
+
+    return res.status(500).json({
+      success: false,
+      message: "Failed to close job",
     });
   }
 };

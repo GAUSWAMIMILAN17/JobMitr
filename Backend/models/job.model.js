@@ -19,7 +19,7 @@ const jobSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    experienceLevel: {
+    experience: {
       type: Number,
       required: true,
     },
@@ -51,19 +51,18 @@ const jobSchema = new mongoose.Schema(
         ref: "Application",
       },
     ],
+      // NEW
+    applicationDeadline: {
+      type: Date,
+      required: true,
+    },
 
-    //   // NEW
-    // applicationDeadline: {
-    //   type: Date,
-    //   required: true,
-    // },
-
-    // // NEW
-    // status: {
-    //   type: String,
-    //   enum: ["ACTIVE", "CLOSED"],
-    //   default: "ACTIVE",
-    // },
+    // NEW
+    status: {
+      type: String,
+      enum: ["ACTIVE", "CLOSED"],
+      default: "ACTIVE",
+    },
   },
   { timestamps: true }
 );

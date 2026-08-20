@@ -10,23 +10,26 @@ import {
   starJob,
   getStarredJobs,
   removeStarredJob,
-  deleteJob
+  deleteJob,
+  closeJob,
 } from "../controllers/job.controller.js";
 // import sendEmail from "../utils/sendEmail.js";
 
 const router = express.Router();
 
 router.route("/post").post(authenticateToken, postJob);
-router.route("/get").get( getAllJobs);
+router.route("/get").get(getAllJobs);
 router.route("/getadminjobs").get(authenticateToken, getAdminJobs);
 router.route("/get/:id").get(getJobById);
 router.route("/update/:id").put(authenticateToken, updateJobs);
 
 router.route("/starJob/:id").post(authenticateToken, starJob);
 router.route("/getStarredJobs").get(authenticateToken, getStarredJobs);
-router.route("/removeStarredJob/:id").delete(authenticateToken, removeStarredJob);
+router
+  .route("/removeStarredJob/:id")
+  .delete(authenticateToken, removeStarredJob);
 router.route("/deleteJob/:jobId").delete(authenticateToken, deleteJob);
-
+router.route("/closeJob/:jobId").put(authenticateToken, closeJob);
 
 // router.get("/test-email", async(req,res)=>{
 
@@ -60,7 +63,7 @@ router.route("/deleteJob/:jobId").delete(authenticateToken, deleteJob);
 
 //         <br/>
 
-//         <a 
+//         <a
 //           href="http://localhost:5173/jobs"
 //           style="
 //             background:#2563eb;
@@ -93,6 +96,5 @@ router.route("/deleteJob/:jobId").delete(authenticateToken, deleteJob);
 //         res.send(error.message);
 //     }
 // });
-
 
 export default router;
