@@ -16,24 +16,6 @@ import {
 } from "lucide-react";
 import useGetAllCompanies from "@/hooks/usegetAllCompanies";
 
-// List of companies & job categories for quick filtering
-const companyCategories = [
-  "All",
-  "Google",
-  "Microsoft",
-  "Amazon",
-  "Meta",
-  "Netflix",
-  "Apple",
-  "Frontend",
-  "Backend",
-  "Full Stack",
-  "DevOps",
-  "Data Science",
-  "UI/UX Design",
-  "Product Manager",
-];
-
 const AdminJobs = () => {
   useGetAllAdminJobs();
   const navigate = useNavigate();
@@ -74,7 +56,6 @@ const AdminJobs = () => {
       });
     }
   };
-
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
       <Navbar />
