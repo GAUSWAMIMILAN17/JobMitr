@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 import { JOB_API_ENDPOINT, APPLICATION_API_ENDPOINT } from "@/utils/data";
 import axios from "axios";
 import { useDispatch, useSelector } from "react-redux";
@@ -39,10 +39,12 @@ const Description = () => {
   const jobId = params.id;
 
   const dispatch = useDispatch();
+  const navigate = useNavigate();
   const { singleJob } = useSelector((store) => store.job);
   const { user } = useSelector((store) => store.auth);
 
   const [loading, setLoading] = useState(true);
+  const [applyLoading, setApplyLoading] = useState(false);
   const [isApplied, setIsApplied] = useState(false);
 
   useEffect(() => {
@@ -51,6 +53,7 @@ const Description = () => {
 
   const applyJobHandler = async () => {
     try {
+      setApplyLoading(true);
       const res = await axios.post(
         `${APPLICATION_API_ENDPOINT}/apply/${jobId}`,
         {},
@@ -64,10 +67,14 @@ const Description = () => {
             applications: [...singleJob.applications, { applicant: user?._id }],
           }),
         );
+        setApplyLoading(false);
         toast.success(res.data.message);
       }
     } catch (error) {
+      setApplyLoading(false);
       toast.error(error?.response?.data?.message || "Something went wrong");
+    } finally {
+      setApplyLoading(false);
     }
   };
 
@@ -171,22 +178,21 @@ const Description = () => {
             </div>
 
             {/* Right — Apply button */}
-            <div className="sm:flex-shrink-0">
-              {isApplied ? (
-                <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-50 border border-green-200 rounded-full text-sm font-semibold text-green-700">
-                  <CheckCircle2 size={15} />
-                  Already Applied
-                </div>
-              ) : (
-                <button
-                  onClick={applyJobHandler}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0f1f35] text-white text-sm font-semibold rounded-full hover:bg-amber-400 hover:text-[#0f1f35] active:scale-95 transition-all duration-150 shadow-sm"
-                >
-                  Apply Now
-                  <ArrowRight size={14} />
-                </button>
-              )}
-            </div>
+            {isApplied ? (
+              <div className="inline-flex items-center gap-2 px-5 py-2.5 bg-green-50 border border-green-200 rounded-full text-sm font-semibold text-green-700">
+                <CheckCircle2 size={15} />
+                Already Applied
+              </div>
+            ) : (
+              <button
+                onClick={applyJobHandler}
+                disabled={applyLoading}
+                className="inline-flex items-center gap-2 px-6 py-2.5 bg-[#0f1f35] text-white text-sm font-semibold rounded-full hover:bg-amber-400 hover:text-[#0f1f35] active:scale-95 transition-all duration-150 shadow-sm disabled:opacity-60 disabled:cursor-not-allowed"
+              >
+                {applyLoading ? "Applying..." : "Apply Now"}
+                {!applyLoading && <ArrowRight size={14} />}
+              </button>
+            )}
           </div>
         </div>
 
@@ -275,14 +281,23 @@ const Description = () => {
             </div>
 
             {/* Apply again at bottom of sidebar */}
-            {!isApplied && (
-              <button
-                onClick={applyJobHandler}
-                className="w-full mt-5 py-2.5 bg-[#0f1f35] text-white text-sm font-semibold rounded-full hover:bg-amber-400 hover:text-[#0f1f35] active:scale-95 transition-all duration-150"
-              >
-                Apply Now
-              </button>
-            )}
+            {!isApplied &&
+              (!user ? (
+                <button
+                  onClick={() => navigate("/login")}
+                  className="w-full mt-5 py-2.5 bg-[#0f1f35] text-white text-sm font-semibold rounded-full hover:bg-amber-400 hover:text-[#0f1f35] active:scale-95 transition-all duration-150"
+                >
+                  Login to Apply
+                </button>
+              ) : (
+                <button
+                  onClick={applyJobHandler}
+                  disabled={applyLoading}
+                  className="w-full mt-5 py-2.5 bg-[#0f1f35] text-white text-sm font-semibold rounded-full hover:bg-amber-400 hover:text-[#0f1f35] active:scale-95 transition-all duration-150 disabled:opacity-60 disabled:cursor-not-allowed"
+                >
+                  {applyLoading ? "Applying..." : "Apply Now"}
+                </button>
+              ))}
           </div>
         </div>
       </main>
