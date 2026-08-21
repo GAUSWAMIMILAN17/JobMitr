@@ -15,31 +15,7 @@ export const applyJob = async (req, res) => {
     if (!jobId) {
       return res
         .status(400)
-        .json({ message: "Invalid job id", success: false });
-    }
-
-    //deadline check
-    if (
-      job.applicationDeadline &&
-      new Date(job.applicationDeadline) <= new Date()
-    ) {
-      // Automatically close it
-      job.status = "Closed";
-      await job.save();
-
-      return res.status(400).json({
-        success: false,
-        message: "Application deadline has expired",
-      });
-    }
-
-    // Check job status
-    if (job.status !== "Active") {
-      return res.status(400).json({
-        success: false,
-        message: "This job is no longer accepting applications",
-      });
-    }
+        .json({ message: "Invalid job id", success: false });}
 
     // check if the user already has applied for this job
     const existingApplication = await Application.findOne({
@@ -67,6 +43,35 @@ export const applyJob = async (req, res) => {
     if (!job) {
       return res.status(404).json({ message: "Job not found", success: false });
     }
+
+    const currentDate = new Date();
+    const applicationDeadline = new Date(job.applicationDeadline);
+
+    currentDate.setHours(0,0,0,0)
+    applicationDeadline.setHours(0,0,0,0);
+    //deadline check
+    if (
+      job.applicationDeadline &&
+      applicationDeadline < currentDate
+    ) {
+      // Automatically close it
+      job.status = "CLOSED";
+      await job.save();
+
+      return res.status(400).json({
+        success: false,
+        message: "Application deadline has expired",
+      });
+    }
+
+    // Check job status
+    if (job.status !== "ACTIVE") {
+      return res.status(400).json({
+        success: false,
+        message: "This job is no longer accepting applications",
+      });
+    }
+
     // create a new application
 
     const newApplication = await Application.create({
@@ -111,6 +116,7 @@ export const getAppliedJobs = async (req, res) => {
 export const getApplicants = async (req, res) => {
   try {
     const jobId = req.params.id;
+    // console.log("Job ID:", jobId); // Debugging line to check the jobId value
     const job = await Job.findById(jobId).populate({
       path: "applications",
       options: { sort: { createdAt: -1 } },

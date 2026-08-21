@@ -1,162 +1,5 @@
-// import React, { useEffect, useState } from "react";
-// import {
-//   Table,
-//   TableBody,
-//   TableCaption,
-//   TableCell,
-//   TableHead,
-//   TableHeader,
-//   TableRow,
-// } from "../ui/table";
-// import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
-// import { MoreHorizontal } from "lucide-react";
-// import { useSelector } from "react-redux";
-// import { toast } from "sonner";
-// import axios from "axios";
-// import { APPLICATION_API_ENDPOINT } from "@/utils/data";
-
-// const shortlistingStatus = ["Accepted", "Rejected"];
-
-// const ApplicantsTable = () => {
-//   const { applicants } = useSelector((store) => store.application);
-
-//   // ⭐ Local UI state to keep selected status for each applicant without refresh
-//   const [selectedStatus, setSelectedStatus] = useState({});
-
-//   // ⭐ Load statuses from backend when data first loads
-//   useEffect(() => {
-//     if (applicants?.applications) {
-//       const map = {};
-//       applicants.applications.forEach((a) => {
-//         map[a._id] = a.status; // backend value (accepted / rejected)
-//       });
-//       setSelectedStatus(map);
-//     }
-//   }, [applicants]);
-
-//   const statusHandler = async (status, id) => {
-//     try {
-//       axios.defaults.withCredentials = true;
-//       const res = await axios.post(
-//         `${APPLICATION_API_ENDPOINT}/status/${id}/update`,
-//         { status }
-//       );
-
-//       if (res.data.success) {
-//         toast.success(res.data.message);
-
-//         // ⭐ Update local UI instantly (without refresh)
-//         setSelectedStatus((prev) => ({
-//           ...prev,
-//           [id]: status.toLowerCase(),
-//         }));
-//       }
-//     } catch (error) {
-//       toast.error(error.response.data.message);
-//     }
-//   };
-
-//   return (
-//     <div>
-//       <Table>
-//         <TableCaption>A list of your recent applied user</TableCaption>
-//         <TableHeader>
-//           <TableRow>
-//             <TableHead>FullName</TableHead>
-//             <TableHead>Email</TableHead>
-//             <TableHead>Contact</TableHead>
-//             <TableHead>Resume</TableHead>
-//             <TableHead>Date</TableHead>
-//             <TableHead className="text-right">Action</TableHead>
-//           </TableRow>
-//         </TableHeader>
-
-//         <TableBody>
-//           {applicants &&
-//             applicants?.applications?.map((item) => (
-//               <tr key={item._id}>
-//                 <TableCell>{item?.applicant?.fullname}</TableCell>
-//                 <TableCell>{item?.applicant?.email}</TableCell>
-//                 <TableCell>{item?.applicant?.phoneNumber}</TableCell>
-
-//                 <TableCell>
-//                   {item.applicant?.profile?.resume ? (
-//                     (() => {
-//                       const resumeUrl = item.applicant.profile.resume;
-//                       const originalName =
-//                         item.applicant.profile.resumeOriginalName?.replace(
-//                           /\.pdf$/i,
-//                           ""
-//                         ) || "resume";
-
-//                       const downloadUrl = resumeUrl.replace(
-//                         "/upload/",
-//                         `/upload/fl_attachment:${originalName}/`
-//                       );
-
-//                       return (
-//                         <a
-//                           className="text-blue-600 cursor-pointer"
-//                           href={downloadUrl}
-//                           download={`${originalName}.pdf`}
-//                         >
-//                           Download
-//                         </a>
-//                       );
-//                     })()
-//                   ) : (
-//                     <span>NA</span>
-//                   )}
-//                 </TableCell>
-
-//                 <TableCell>
-//                   {item?.applicant?.createdAt.split("T")[0]}
-//                 </TableCell>
-
-//                 <TableCell className="float-right cursor-pointer">
-//                   <Popover>
-//                     <PopoverTrigger>
-//                       <MoreHorizontal />
-//                     </PopoverTrigger>
-
-//                     <PopoverContent className="w-32">
-//                       {shortlistingStatus.map((status, index) => {
-//                         return (
-//                           <div
-//                             onClick={() => statusHandler(status, item?._id)}
-//                             key={index}
-//                             className="flex w-fit items-center my-2 cursor-pointer"
-//                           >
-//                             <input
-//                               type="radio"
-//                               name={`shortlistingStatus-${item._id}`}
-//                               value={status}
-//                               checked={
-//                                 selectedStatus[item._id] ===
-//                                 status.toLowerCase()
-//                               }
-//                               readOnly
-//                             />
-//                             <span className="ml-1">{status}</span>
-//                           </div>
-//                         );
-//                       })}
-//                     </PopoverContent>
-//                   </Popover>
-//                 </TableCell>
-//               </tr>
-//             ))}
-//         </TableBody>
-//       </Table>
-//     </div>
-//   );
-// };
-
-// export default ApplicantsTable;
-
-
 import React, { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { toast } from "sonner";
 import axios from "axios";
 import { APPLICATION_API_ENDPOINT } from "@/utils/data";
@@ -173,6 +16,7 @@ import {
   PopoverContent,
   PopoverTrigger,
 } from "../ui/popover";
+import { setLoading } from "@/redux/authSlice";
 
 const shortlistingStatus = ["Accepted", "Rejected"];
 
@@ -233,6 +77,7 @@ const ApplicantsTable = () => {
   const { applicants } = useSelector((store) => store.application);
   const [selectedStatus, setSelectedStatus] = useState({});
   const [loadingId, setLoadingId] = useState(null);
+  const dispatch = useDispatch();
 
   useEffect(() => {
     if (applicants?.applications) {

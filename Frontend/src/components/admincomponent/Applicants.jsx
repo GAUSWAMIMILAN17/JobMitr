@@ -7,30 +7,61 @@ import { setAllApplicants } from "@/redux/applicationSlice";
 import { APPLICATION_API_ENDPOINT } from "@/utils/data";
 import Navbar from "../components_lite/Navbar";
 import Footer from "../components_lite/Footer";
-import { Users, ArrowLeft, Briefcase } from "lucide-react";
+import { Users, ArrowLeft, Briefcase, Loader2 } from "lucide-react";
+import { setLoading } from "@/redux/authSlice";
 
 const Applicants = () => {
   const params = useParams();
   const navigate = useNavigate();
   const dispatch = useDispatch();
   const { applicants } = useSelector((store) => store.application);
+  const { loading } = useSelector((store) => store.auth);
 
   const totalApplicants = applicants?.applications?.length ?? 0;
 
   useEffect(() => {
     const fetchAllApplicants = async () => {
       try {
+        dispatch(setLoading(true));
         const res = await axios.get(
           `${APPLICATION_API_ENDPOINT}/${params.id}/applicants`,
           { withCredentials: true }
         );
+        // console.log("Applicants Response:", res.data);
+        dispatch(setLoading(false));
         dispatch(setAllApplicants(res.data.job));
       } catch (error) {
+        dispatch(setLoading(false));
         console.error(error);
+      } finally {
+        dispatch(setLoading(false));
       }
     };
     fetchAllApplicants();
   }, []);
+
+  if (loading) {
+    return (
+      <>
+      <Navbar />
+      <div className="min-h-screen flex items-center justify-center bg-slate-50">
+        <div className="flex flex-col items-center gap-4">
+
+          <Loader2
+            size={40}
+            className="animate-spin text-amber-500"
+          />
+
+          <p className="text-sm font-medium text-slate-500">
+            Loading applicants...
+          </p>
+
+        </div>
+      </div>
+      <Footer />
+      </>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col bg-slate-50">
