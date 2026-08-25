@@ -16,6 +16,8 @@ import {
   CalendarDays,
   CheckCircle2,
   ArrowRight,
+  ExpandIcon,
+  StopCircleIcon,
 } from "lucide-react";
 import { Button } from "../ui/button";
 import { AvatarImage, Avatar } from "../ui/avatar";
@@ -120,6 +122,7 @@ const Description = () => {
   }
 
   const postedDate = singleJob?.createdAt?.split("T")[0] ?? "—";
+  const deadlineDate = singleJob?.applicationDeadline.split("T")[0] ?? "—"
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -277,6 +280,11 @@ const Description = () => {
                 label="Posted On"
                 value={postedDate}
                 icon={CalendarDays}
+              />
+              <InfoRow
+                label="Application Deadline"
+                value={deadlineDate}
+                icon={StopCircleIcon}
               />
             </div>
 

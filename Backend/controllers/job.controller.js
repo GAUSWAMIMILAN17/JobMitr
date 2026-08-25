@@ -61,7 +61,7 @@ export const postJob = async (req, res) => {
       title,
       description,
       requirements: requirements.split(","),
-      salary: Number(salary),
+      salary: salary,
       location,
       jobType,
       experience: experience,
@@ -251,7 +251,7 @@ export const updateJobs = async (req, res) => {
       job.location = location;
     }
     if (salary !== undefined && salary !== "") {
-      job.salary = Number(salary);
+      job.salary = salary;
     }
     if (position !== undefined && position !== "") {
       job.position = Number(position);
@@ -261,7 +261,7 @@ export const updateJobs = async (req, res) => {
     }
 
     if (experience !== undefined && experience !== "") {
-      job.experience = Number(experience);
+      job.experience = experience;
     }
     if (jobType !== undefined) {
       job.jobType = jobType;

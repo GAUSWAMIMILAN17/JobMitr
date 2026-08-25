@@ -94,9 +94,9 @@ const PostJob = () => {
       description: input.description.trim(),
       location: input.location.trim(),
 
-      salary: Number(input.salary),
+      salary: input.salary,
       position: Number(input.position),
-      experience: Number(input.experience),
+      experience: input.experience,
 
       requirements: input.requirements.trim(),
 
@@ -275,7 +275,7 @@ const PostJob = () => {
 
                     <Input
                       id="salary"
-                      type="number"
+                      type="text"
                       name="salary"
                       value={input.salary}
                       onChange={changeEventHandler}
@@ -325,7 +325,7 @@ const PostJob = () => {
 
                     <Input
                       id="experience"
-                      type="number"
+                      type="text"
                       name="experience"
                       value={input.experience}
                       onChange={changeEventHandler}

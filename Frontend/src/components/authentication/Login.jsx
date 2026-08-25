@@ -7,44 +7,73 @@ import { USER_API_ENDPOINT } from "@/utils/data.js";
 import { useDispatch, useSelector } from "react-redux";
 import { setLoading, setUser } from "@/redux/authSlice";
 import Footer from "../components_lite/Footer";
-import { Mail, Lock, Loader2, Briefcase, User } from "lucide-react";
+import {
+  Mail,
+  Lock,
+  Loader2,
+  Briefcase,
+  User,
+} from "lucide-react";
 
 const inputClass =
   "w-full pl-10 pr-4 py-2.5 text-sm text-[#0f1f35] bg-slate-50 border border-slate-200 rounded-xl outline-none focus:border-amber-400 focus:ring-2 focus:ring-amber-400/20 transition-all duration-150 placeholder:text-slate-400";
 
 const Login = () => {
-  const [input, setInput] = useState({ email: "", password: "", role: "" });
+  const [input, setInput] = useState({
+    email: "",
+    password: "",
+    role: "",
+  });
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
+
   const { loading, user } = useSelector((store) => store.auth);
 
   const changeEventHandler = (e) => {
-    setInput({ ...input, [e.target.name]: e.target.value });
+    setInput({
+      ...input,
+      [e.target.name]: e.target.value,
+    });
   };
 
   const submitHandler = async (e) => {
     e.preventDefault();
+
     try {
       dispatch(setLoading(true));
-      const res = await axios.post(`${USER_API_ENDPOINT}/login`, input, {
-        headers: { "Content-Type": "application/json" },
-        withCredentials: true,
-      });
+
+      const res = await axios.post(
+        `${USER_API_ENDPOINT}/login`,
+        input,
+        {
+          headers: {
+            "Content-Type": "application/json",
+          },
+          withCredentials: true,
+        }
+      );
+
       if (res.data.success) {
         dispatch(setUser(res.data.user));
         navigate("/");
         toast.success(res.data.message);
       }
     } catch (error) {
-      toast.error("Login failed. Please check your credentials.");
+      toast.error(
+        error?.response?.data?.message ||
+          "Login failed. Please check your credentials."
+      );
     } finally {
       dispatch(setLoading(false));
     }
   };
 
   useEffect(() => {
-    if (user) navigate("/");
-  }, []);
+    if (user) {
+      navigate("/");
+    }
+  }, [user, navigate]);
 
   return (
     <div className="min-h-screen bg-slate-50 flex flex-col">
@@ -53,41 +82,50 @@ const Login = () => {
       <main className="flex-1 flex items-center justify-center px-4 py-16">
         <div className="w-full max-w-md">
 
-          {/* Card */}
+          {/* Login Card */}
           <div className="bg-white border border-slate-200 rounded-2xl shadow-sm overflow-hidden">
 
-            {/* Top navy banner */}
-            <div className="bg-[#0f1f35] px-8 pt-8 pb-10 text-center relative overflow-hidden">
-              <div
-                className="absolute inset-0 opacity-[0.04]"
-                style={{
-                  backgroundImage: "radial-gradient(circle, white 1px, transparent 1px)",
-                  backgroundSize: "20px 20px",
-                }}
-              />
-              <div className="relative">
-                <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[#4a90d9] to-[#2563a8] flex items-center justify-center text-white font-black text-xl mx-auto mb-3 shadow-lg">
-                  JM
-                </div>
-                <h1 className="text-2xl font-black text-white tracking-tight">
-                  Job<span className="text-amber-400">Mitra</span>
-                </h1>
-                <p className="text-slate-400 text-sm mt-1">
+            {/* Logo Header */}
+            <div className="bg-white px-8 pt-8 pb-8 text-center border-b border-slate-100">
+
+              <div className="flex flex-col items-center">
+
+                {/* JobMitra Logo */}
+                <img
+                  src="/Logo.png"
+                  alt="JobMitra Logo"
+                  className="w-56 h-auto object-contain mx-auto mb-1"
+                />
+
+                <p className="text-slate-500 text-sm mt-1">
                   Welcome back! Sign in to continue.
                 </p>
+
               </div>
             </div>
 
-            {/* Form body */}
-            <form onSubmit={submitHandler} className="px-8 py-7 space-y-5">
+            {/* Form */}
+            <form
+              onSubmit={submitHandler}
+              className="px-8 py-2 space-y-5"
+            >
 
               {/* Email */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-xs font-bold text-[#0f1f35] uppercase tracking-wide">
-                  <Mail size={11} className="text-amber-500" /> Email
+                  <Mail
+                    size={11}
+                    className="text-amber-500"
+                  />
+                  Email
                 </label>
+
                 <div className="relative">
-                  <Mail size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Mail
+                    size={15}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+
                   <input
                     type="email"
                     name="email"
@@ -103,10 +141,19 @@ const Login = () => {
               {/* Password */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-xs font-bold text-[#0f1f35] uppercase tracking-wide">
-                  <Lock size={11} className="text-amber-500" /> Password
+                  <Lock
+                    size={11}
+                    className="text-amber-500"
+                  />
+                  Password
                 </label>
+
                 <div className="relative">
-                  <Lock size={15} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400" />
+                  <Lock
+                    size={15}
+                    className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400"
+                  />
+
                   <input
                     type="password"
                     name="password"
@@ -119,14 +166,21 @@ const Login = () => {
                 </div>
               </div>
 
-              {/* Role selector */}
+              {/* Role */}
               <div className="space-y-1.5">
                 <label className="flex items-center gap-1.5 text-xs font-bold text-[#0f1f35] uppercase tracking-wide">
-                  <Briefcase size={11} className="text-amber-500" /> I am a
+                  <Briefcase
+                    size={11}
+                    className="text-amber-500"
+                  />
+                  I am a
                 </label>
+
                 <div className="grid grid-cols-2 gap-3">
+
                   {["Student", "Recruiter"].map((role) => {
                     const isSelected = input.role === role;
+
                     return (
                       <label
                         key={role}
@@ -136,6 +190,7 @@ const Login = () => {
                             : "border-slate-200 bg-slate-50 hover:border-slate-300"
                         }`}
                       >
+
                         <input
                           type="radio"
                           name="role"
@@ -144,6 +199,8 @@ const Login = () => {
                           onChange={changeEventHandler}
                           className="hidden"
                         />
+
+                        {/* Custom Radio */}
                         <div
                           className={`w-4 h-4 rounded-full border-2 flex items-center justify-center flex-shrink-0 transition-all duration-150 ${
                             isSelected
@@ -155,19 +212,36 @@ const Login = () => {
                             <div className="w-1.5 h-1.5 rounded-full bg-white" />
                           )}
                         </div>
+
                         <div className="flex items-center gap-1.5">
-                          <User size={13} className={isSelected ? "text-amber-600" : "text-slate-400"} />
-                          <span className={`text-sm font-semibold ${isSelected ? "text-amber-700" : "text-slate-500"}`}>
+                          <User
+                            size={13}
+                            className={
+                              isSelected
+                                ? "text-amber-600"
+                                : "text-slate-400"
+                            }
+                          />
+
+                          <span
+                            className={`text-sm font-semibold ${
+                              isSelected
+                                ? "text-amber-700"
+                                : "text-slate-500"
+                            }`}
+                          >
                             {role}
                           </span>
                         </div>
+
                       </label>
                     );
                   })}
+
                 </div>
               </div>
 
-              {/* Submit button */}
+              {/* Sign In Button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -175,7 +249,10 @@ const Login = () => {
               >
                 {loading ? (
                   <>
-                    <Loader2 size={16} className="animate-spin" />
+                    <Loader2
+                      size={16}
+                      className="animate-spin"
+                    />
                     Signing in…
                   </>
                 ) : (
@@ -183,30 +260,32 @@ const Login = () => {
                 )}
               </button>
 
-              
-              {/* Sign up link */}
+              {/* Forgot Password */}
               <p className="text-center text-sm text-slate-500 pt-1">
-                <p className="text-center text-sm text-slate-500 pt-1">
-                Don't remeber password ?{" "}
+                Don't remember your password?{" "}
+
                 <Link
                   to="/forgot-password"
                   className="font-bold text-[#0f1f35] hover:text-amber-500 transition-colors duration-150"
                 >
                   Forgot Password?
                 </Link>
-                </p>
+              </p>
+
+              {/* Register */}
+              <p className="text-center text-sm text-slate-500">
                 Don't have an account?{" "}
+
                 <Link
                   to="/register"
                   className="font-bold text-[#0f1f35] hover:text-amber-500 transition-colors duration-150"
                 >
                   Sign Up
                 </Link>
-                
               </p>
+
             </form>
           </div>
-
         </div>
       </main>
 

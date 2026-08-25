@@ -91,10 +91,10 @@ const JobSetup = () => {
       title: input.title,
       description: input.description,
       location: input.location,
-      salary: Number(input.salary),
+      salary: input.salary,
       position: Number(input.position),
       requirements: input.requirements,
-      experience: Number(input.experience),
+      experience: input.experience,
       jobType: input.jobType,
       applicationDeadline: input.applicationDeadline,
     };
@@ -267,7 +267,7 @@ const JobSetup = () => {
 
                     <Input
                       id="salary"
-                      type="number"
+                      type="text"
                       name="salary"
                       value={input.salary}
                       onChange={changeEventHandler}
@@ -319,7 +319,7 @@ const JobSetup = () => {
 
                     <Input
                       id="experience"
-                      type="number"
+                      type="text"
                       name="experience"
                       value={input.experience}
                       onChange={changeEventHandler}
